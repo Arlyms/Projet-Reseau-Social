@@ -22,7 +22,7 @@ app.use(express.urlencoded({
 app.use(helmet());
 
 app.use ('/images', express.static(path.join(__dirname,'images'))),
-app.use(routerUsers);
-app.use(routerPosts);
+app.use('/api/auth', routerUsers);
+app.use('/api/posts', routerPosts);
 
 module.exports = app;

@@ -9,7 +9,7 @@ const Users = {
 
   findOne: function (login, password) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM `user` WHERE login = ? AND password = ?;";
+      const query = 'SELECT * FROM `users` WHERE login = ? AND password = ?;';
 
       const hashedPassword = Users.hashValue(password);
       database.query(query, [login, hashedPassword], (err, results, fields) => {
@@ -29,7 +29,7 @@ const Users = {
   insert: function (userData) {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO `user` (name, login, password) VALUES (?, ?, ?);";
+        'INSERT INTO `users` (name, login, password) VALUES (?, ?, ?);';
 
       const hashedPassword = Users.hashValue(userData.password);
 
@@ -53,11 +53,11 @@ const Users = {
 
   update: function (userData) {
     return new Promise((resolve, reject) => {
-      const query ="UPDATE `user` SET name = ?, login = ?, pp = ? WHERE id = ?;";
+      const query ='UPDATE `users` SET name = ?, login = ?, pictureProfile = ? WHERE id_user = ?;';
 
       database.query(
         query,
-        [userData.name, userData.login, userData.pp, userData.id],
+        [userData.name, userData.login, userData.pictureProfile, userData.id_user],
         (err, results, fields) => {
           if (err) {
           reject({error : "Cette fonction est indisponible !"});
@@ -72,9 +72,9 @@ const Users = {
 
   delete: function (userData) {
     return new Promise((resolve, reject) => {
-      const query = "DELETE FROM `user` WHERE id = ?;";
+      const query = 'DELETE FROM `users` WHERE id_user = ?;';
       database.query(query,
-        [userData.id],
+        [userData.id_user],
         (err, results, fields) => {
           if (err) {
             console.log("Erreur !!");
@@ -90,10 +90,10 @@ const Users = {
 
   myProfil: function (userData) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT name, login, pictureProfil FROM `user` WHERE id = ?;";
+      const query = 'SELECT name, login, pictureProfil FROM `users` WHERE id_user = ?;';
         database.query(
           query,
-          [userData.id], 
+          [userData.id_user], 
           (err, results, fields) => { // fields ? 
           if (err) {
             console.log("Erreur !!");

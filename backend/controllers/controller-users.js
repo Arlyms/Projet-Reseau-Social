@@ -52,7 +52,7 @@ const ControllerUsers = {
 
   deleteUser: async function (req, res, next) {
     try {
-      const user = await Users.deleteUser(req.body);
+      const user = await Users.delete(req.body);
       res.status(200).send();
     } catch (exception) {
       res.status(exception).send();
