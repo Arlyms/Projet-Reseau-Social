@@ -29,13 +29,13 @@ const Users = {
   insert: function (userData) {
     return new Promise((resolve, reject) => {
       const query =
-        'INSERT INTO `users` (name, login, password) VALUES (?, ?, ?);';
+        'INSERT INTO `users` (firstName, name, login, password) VALUES (?, ?, ?);';
 
       const hashedPassword = Users.hashValue(userData.password);
 
       database.query(
         query,
-        [userData.name, userData.login, hashedPassword],
+        [userData.firstName, userData.name, userData.login, hashedPassword],
         (err, results, fields) => {
           if (err) {
             console.log("Erreur !!");
@@ -53,11 +53,11 @@ const Users = {
 
   update: function (userData) {
     return new Promise((resolve, reject) => {
-      const query ='UPDATE `users` SET name = ?, login = ?, pictureProfile = ? WHERE id_user = ?;';
+      const query ='UPDATE `users` SET firstName = ?, name = ?, login = ?, pictureProfile = ? WHERE id_user = ?;';
 
       database.query(
         query,
-        [userData.name, userData.login, userData.pictureProfile, userData.id_user],
+        [userData.Name, userData.firstName, userData.login, userData.pictureProfile, userData.id_user],
         (err, results, fields) => {
           if (err) {
           reject({error : "Cette fonction est indisponible !"});
@@ -90,7 +90,7 @@ const Users = {
 
   myProfil: function (userData) {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT name, login, pictureProfil FROM `users` WHERE id_user = ?;';
+      const query = 'SELECT firstName, name, login, pictureProfil FROM `users` WHERE id_user = ?;';
         database.query(
           query,
           [userData.id_user], 
