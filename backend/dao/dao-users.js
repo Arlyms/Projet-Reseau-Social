@@ -29,7 +29,7 @@ const Users = {
   insert: function (userData) {
     return new Promise((resolve, reject) => {
       const query =
-        'INSERT INTO `users` (firstName, name, login, password) VALUES (?, ?, ?);';
+        'INSERT INTO `users` (firstName, name, login, password) VALUES (?, ?, ?, ?);';
 
       const hashedPassword = Users.hashValue(userData.password);
 
@@ -42,7 +42,7 @@ const Users = {
             reject();
           }
           else{
-          resolve();
+          resolve(results);
           };
         }
       );

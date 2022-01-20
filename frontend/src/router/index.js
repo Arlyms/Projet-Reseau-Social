@@ -17,7 +17,7 @@ const routes = [
     path: '/login',
     component: Login,
     meta: {
-      title: 'Connection'
+      title: 'Groupomania'
     }
   }, {
     name: 'NotFound',
