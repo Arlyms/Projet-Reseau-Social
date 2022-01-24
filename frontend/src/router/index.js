@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Profile from '@/views/Profile.vue';
+import Profile from '@/views/Feed.vue';
 import Login from '@/views/Login.vue';
 import Notfound from '@/views/Notfound.vue';
 
 
 const routes = [
   {
-    name: 'Profile',
-    path: '/profile',
+    name: 'Feed',
+    path: '/feed',
     component: Profile,
     meta: {
       title: 'Profil'

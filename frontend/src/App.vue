@@ -11,7 +11,7 @@ export default{
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap');
 
 * {
@@ -30,7 +30,6 @@ export default{
 body {
   background-image: linear-gradient(white 0%,#D1515A 100% /** comment structurer en sasss ? (color-primary) **/);
   display: flex;
-  align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding:32px;

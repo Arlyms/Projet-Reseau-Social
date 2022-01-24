@@ -14,12 +14,20 @@
             <div class="card__form">
                 <input v-model="password" class="form__input" type="password" placeholder="Mot de passe"/> <!-- Les deux -->
             </div>
+            <div class="card__form wrong" v-if="mode == 'login' && status == 'error_login'">
+                ⚠ Vos identifiants de connexion ne correspondent à aucun compte sur notre système. <!-- Mode Connexion -->
+            </div>
+                <div class="card__form wrong" v-if="mode == 'create' && status == 'error_login'">
+                ⚠ Email déjà utilisé. <!-- Mode Connexion -->
+            </div>
             <div class="card__form">
-                <button @click="login()" class="card__button" :class="{'card__button--disabled' : !validatedFields}" v-if = "mode == 'login'"> <!-- Mode Connexion -->
-                Connexion
+                <button @click="login()" class="card__button" :class="{'card__button--disabled' : !textFields}" v-if = "mode == 'login'"> <!-- Mode Connexion -->
+                <span v-if="status == 'loading'">Connexion en cours...</span>
+                <span v-else>Connexion</span>
                 </button>
-                <button @click="createAccount()" class="card__button" :class="{'card__button--disabled' : !validatedFields}" v-else> <!-- Mode Inscription -->
-                Créer mon compte
+                <button @click="createAccount()" class="card__button" :class="{'card__button--disabled' : !textFields}" v-else> <!-- Mode Inscription -->
+                <span v-if="status == 'loading'">Création en cours...</span>
+                <span v-else>Créer mon compte</span>
                 </button>
             </div>
             <p class="card__subtitle card__action" v-if = "mode == 'login'" @click="switchToCreateAccount()">Créer un compte</p> <!-- Mode Connexion -->
@@ -34,6 +42,9 @@
 </template>
    
 <script>
+
+import { mapState } from 'vuex'
+
  export default {  
     name: 'Login',
     data: function() {
@@ -47,7 +58,7 @@
     },
 
     computed: {
-        validatedFields: function () {
+        textFields: function () {
             if (this.mode == 'create') { 
                 if (this.prenom != "" && this.nom != "" && this.email != "" && this.password != "" ) {
                     return true;
@@ -61,7 +72,8 @@
                     return false;
                 }   
             }
-        }  
+        },
+        ...mapState(['status'])
     },
 
     methods: {
@@ -72,23 +84,25 @@
             this.mode = 'login';
         },
         createAccount: function () {
+            const self =  this;
             this.$store.dispatch('createAccount', {
                 firstName: this.prenom,
                 name: this.nom,
                 login: this.email,
                 password: this.password,
-            }).then(function (response) {
-                console.log(response);
+            }).then(function () {
+               self.login();
             }, function (error) {
                 console.log(error);
             })
         },
         login: function () {
+            const self =  this;
             this.$store.dispatch('login', {
                 login: this.email,
                 password: this.password,
-            }).then(function (response) {
-                console.log(response);
+            }).then(function () {
+              self.$router.push('/feed');
             }, function (error) {
                 console.log(error);
             })
@@ -97,8 +111,13 @@
 }
 </script>
 
-<style lang="scss">
-.card{
+<style lang="scss" scoped>
+
+body {
+    align-items: center;
+}
+
+.card {
     display: flex;
     .card-right {
         position: relative;
@@ -153,6 +172,9 @@
                 cursor:pointer;
                 background: #091F43;
             }
+            span {
+                color: white;
+            }
         }
         
         .card__action {
@@ -164,10 +186,13 @@
         
         .card__button--disabled {
             background:#cecece;
-            color:#ececec;
+            color: white;
             &:hover {
                 cursor: not-allowed;
                 background: #cecece;
+            }
+            span {
+                color: white;
             }
         }
         
@@ -191,6 +216,11 @@
                 color:#aaaaaa;
             }
         }  
+    }
+    .wrong {
+        color: #bf36a4;
+        font-size: 10px;
+        text-align: center;
     }
 }    
 </style>

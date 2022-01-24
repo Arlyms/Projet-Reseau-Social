@@ -9,8 +9,12 @@ const Posts = {
           const query = 
           'SELECT posts.id_post, posts.id_user, DATE_FORMAT((posts.date), "%y %b %d à %k:%i"), posts.content, users.name, users.pictureProfile FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY posts.date DESC;';
           database.query(query,(err, results, fields) => {
-            if (err) throw err;
+            if (err) {
+              console.log("Erreur Serveur");
+              reject(500);
+            } else {
             resolve(results);
+            }
           });
         });
     },
