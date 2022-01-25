@@ -56,7 +56,6 @@ import { mapState } from 'vuex'
             password: '',
         }
     },
-
     computed: {
         textFields: function () {
             if (this.mode == 'create') { 

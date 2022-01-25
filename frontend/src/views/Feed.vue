@@ -9,7 +9,7 @@
                 <img src="../assets/harry.jpg" alt="profile Picture"/>
             </div>
             <div class="form__content">
-                <textarea class="form__input" type="text" placeholder="Quoi de neuf, Harry ? " maxlength="250"></textarea>
+                <textarea class="form__input" type="text"  placeholder="Quoi de neuf, Harry ? " maxlength="250"></textarea>
             </div>
         </div>
         <div class="card__posts"> <!-- code en dur !! A changer-->
@@ -22,9 +22,12 @@
                 <p>Devinez qui gagne la coupe des quatres maisons cette année 😂</p>
                 <p class="date">22 janvier, 19:41</p>
             </div>
+            <div v-if="comment">
+                    <textarea class="comment__content" type="text" cols="50" rows="2" maxlength="100"></textarea>
+            </div>
             <div class="post__button">
-                <button class="button">Liker</button> 
-                <button class="button">Commenter</button>
+                <div class="button">Liker</div> 
+                <div class="button" @click="whriteComment">Commenter</div>
             </div>
         </div>
         <div class="card__posts"> <!-- code en dur !! A changer-->
@@ -38,24 +41,37 @@
                 <p class="date">25 janvier, 20:00</p>
             </div>
             <div class="post__button">
-                <button class="button">Liker</button> 
-                <button class="button">Commenter</button>
+                <div class="button">Liker</div> 
+                <div class="button">Commenter</div>
             </div>
         </div>
     </div>
-    <div class="card__nav">
-        <button class="nav__button"><span><fa icon="user" /></span></button>
-        <button class="nav__button"><fa icon="moon" /></button>
-        <button @click="logout()" class="nav__button"><fa icon="door-open" /></button>
+    <div class="card__nav">   
+        <div class="nav__button" @click="showUser">
+            <fa icon="user" />
+        </div>
+        <div v-if="display" class="nav__user">
+        </div>
+        <div class="nav__button">
+            <fa icon="moon" />
+        </div>
+        <div @click="logout()" class="nav__button">
+            <fa icon="door-open" />
+        </div>
     </div>
 </div>      
 </template>
 
 <script>
 
-
 export default {
     name: 'Feed',
+    data: function(){
+        return {
+            display: false,
+            comment: false,
+        }
+    },
     mounted: function () {
         console.log(this.$store.state.user);
         if (this.$store.state.user.id_user == -1) {
@@ -69,6 +85,12 @@ export default {
         logout: function () {
             //ajouter un "this.$store.commit('logout');"
             this.$router.push('/login');
+        },
+        showUser() {
+            this.display = !this.display;
+        },
+        whriteComment() {
+            this.comment = !this.comment;
         }
     }, 
 }
@@ -87,7 +109,7 @@ body {
     z-index: 1;
     position: absolute;    
     max-width: 100%;
-    width: 500px;
+    width: 600px;
     height : 10px;
     background: linear-gradient(transparent 0%,#b0b0b0 100%);
     border-radius: 8px 8px 0px 0px;
@@ -104,7 +126,7 @@ body {
     flex-direction: column;    
     position: relative;    
     max-width: 100%;
-    width: 500px;
+    width: 600px;
     height : 100%;
     background: white;
     border-radius: 8px 8px 8px 8px;
@@ -215,6 +237,7 @@ body {
             .post__button{
                 width: 100%;
                 display:flex;
+
                 justify-content: space-between;
                 border-bottom:  1px  solid #b0b0b0;
                 margin-top: 20px;
@@ -225,6 +248,9 @@ body {
                     width: 100%;
                     margin-left:30px;
                     margin-right:30px;
+                    text-align: center;
+                    padding-top: 5px;
+                    font-size: 0.8em;
                     transition: .4s background-color;
                     &:hover {
                         cursor:pointer;
@@ -233,13 +259,46 @@ body {
                         background: #091F43;
                     }
                 }
-            }    
+            } 
+            .comment__content {
+                width: 100%;
+                padding:8px;
+                border: none;
+                margin-top: 10px;
+                margin-left: 110px;
+                background: #e6e6e6;
+                font-weight: 500;
+                font-size: .6em;
+                min-width: 100px;
+                border-radius: 8px 8px 8px 8px ;
+                box-shadow: 5px 5px 5px #b0b0b0;
+                resize : initial;
+                &:hover{
+                    border: none;
+                    outline: none;
+                }
+                &:focus {
+                    border: none;
+                    outline: none;
+                }
+            }   
         }
     }
     .card__nav {
+        position: relative;
         display: flex;
         flex-direction: column;
+        .nav__user {
+            z-index: 3;
+            position: absolute;
+            right: 82px;
+            background: white;
+            border-radius: 16px;
+            width: 250px;
+            height: 300px;
+        }
         .nav__button {
+            position: relative;
             background: white;
             border-radius: 16px;
             border: none;
@@ -253,10 +312,13 @@ body {
                 cursor:pointer;
                 background: #091F43;
             }
-        }
-        span {
+            svg {
+            position: absolute;
+            margin: auto;
             color: red;
-        }
+            align-items: center;
+            } 
+        }          
     }
 
 }
