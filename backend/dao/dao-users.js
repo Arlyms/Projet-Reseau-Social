@@ -1,6 +1,5 @@
 const database = require("./db");
 const jwt = require("jsonwebtoken");
-const mysql = require("mysql2");
 const crypto = require("crypto");
 
 const Users = {

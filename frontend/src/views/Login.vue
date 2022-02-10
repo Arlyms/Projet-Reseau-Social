@@ -17,7 +17,7 @@
             <div class="card__form wrong" v-if="mode == 'login' && status == 'error_login'">
                 ⚠ Vos identifiants de connexion ne correspondent à aucun compte sur notre système. <!-- Mode Connexion -->
             </div>
-                <div class="card__form wrong" v-if="mode == 'create' && status == 'error_login'">
+                <div class="card__form wrong" v-if="mode == 'create' && status == 'error_create'">
                 ⚠ Email déjà utilisé. <!-- Mode Connexion -->
             </div>
             <div class="card__form">
@@ -91,7 +91,8 @@ import { mapState } from 'vuex'
                 password: this.password,
             }).then(function () {
                self.login();
-            }, function (error) {
+            },function (error) {
+                console.log("c'est ici");
                 console.log(error);
             })
         },
@@ -102,6 +103,7 @@ import { mapState } from 'vuex'
                 password: this.password,
             }).then(function () {
               self.$router.push('/feed');
+              console.log("Tout est good !! ");
             }, function (error) {
                 console.log(error);
             })

@@ -12,15 +12,9 @@ export default createStore({
       id_user: -1,
       token: '',
     },
-    userData:{
-      firstName:'',
-      name:'',
-      login:'',
-      profilePicture:'',
-    },
-    feedDatas:{
-      content:'',
-    },
+    userDatas:[],
+    posts:[],
+    comments: [],
   },
   mutations: {
     setStatus: function (state, status) {
@@ -33,29 +27,34 @@ export default createStore({
     userDatas: function (state, userDatas){
       state.userDatas = userDatas;
     },
-    feedDatas: function (state, feedDatas) {
-      state.feedDatas = feedDatas;
+    SET_POSTS: function (state, posts){
+      state.posts = posts;
+    },
+    SET_COMMENTS: function (state, comments){
+      state.comments = comments;
     }
   },
   actions: {
-    createAccount: ({commit}, userData) => {
+    createAccount: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
-        instance.post('/auth/signup', userData) 
+        instance.post('/auth/signup', userDatas) 
         .then(function (response) {
-          commit('setStatus', 'create');
+          console.log(userDatas);
+          commit('setStatus', 'created');
           resolve(response);
         })
         .catch(function (error) {
+          console.log();
           commit('setStatus', 'error_create');
           reject(error);
         })
       });  
     },
-    login: ({commit}, userData) => {
+    login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
-        instance.post('/auth/login', userData) 
+        instance.post('/auth/login', userDatas) 
         .then(function (response) {
           commit('setStatus', '');
           commit('logUser', response.data);
@@ -76,14 +75,26 @@ export default createStore({
       })
     },
     getPosts: ({commit}) =>{
-      instance.get('/posts') 
+      instance.get('/posts/') 
       .then(function (response) {
-        commit('feedDatas', response.data);
+        console.log(response.data)
+        commit('SET_POSTS', response.data);
       })
-      .catch(function () {
+      .catch(function () { 
+      })
+    },
+    getComments: ({commit}) =>{
+      instance.get('/posts/comments') 
+      .then(function (response) {
+        console.log(response.data)
+        commit('SET_COMMENTS', response.data);
+      })
+      .catch(function () { 
       })
     }
+
   }, 
   modules: {
+    
   }
 })

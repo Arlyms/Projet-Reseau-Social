@@ -1,16 +1,22 @@
 const Posts = require("../dao/dao-posts");
+const fs = require ("fs");
 
 const ControllerPosts = {
-  
-  findAllPost: async function (req, res, next) {
-    console.log(req.body);
-    await Posts.findAllPost(req.body);
-    res.send();
+  //Good//
+  findAllPost: function (req, res, next) {
+    Posts.findAllPost(req.body)
+    .then(result => {
+      res.status(200).json(result);})
+    .catch(error => {
+        res.status(500).json({
+            message: 'erreur'
+        });
+    });
   },
-
-  addPost: async function (req, res, next) {
+  //Good//
+  addPost: function (req, res, next) {
     console.log(req.body);
-    await Posts.createPost(req.body);
+    Posts.createPost(req.body);
     res.send("Nouveau Post !");
   },
 
@@ -32,11 +38,17 @@ const ControllerPosts = {
     }
   },
 
-  findAllComment: async function (req, res, next) {
-    console.log(req.body);
-    await Posts.findAllComment(req.body);
-    res.send();
-  },  
+/*  findAllComment: function (req, res, next) {
+    Posts.findAllComment(req.body)
+    .then(result => {
+      res.status(200).json(result);})
+    .catch(error => {
+        res.status(500).json({
+            message: 'erreur'
+        });
+    });
+  }, 
+*/  
 
   addComment: async function (req, res, next) {
     console.log(req.body);

@@ -3,54 +3,89 @@
     <div class="card__head">
         <img src="../assets/icon-left-font-monochrome-black.png" alt="logo groupomania"/>
     </div> 
+<!--Feed-->    
     <div class="card__feed">
         <div class="card__form">
             <div class="form__author">
                 <img src="../assets/harry.jpg" alt="profile Picture"/>
             </div>
             <div class="form__content">
-                <textarea class="form__input" type="text"  placeholder="Quoi de neuf, Harry ? " maxlength="250"></textarea>
+                <textarea class="form__input" type="text"  placeholder="Quoi de neuf, Harry ? " row="1" maxlength="250"></textarea>
+                <div class="from__send">
+                    <div class="form__addImg">
+                        <fa icon="image" />
+                    </div>
+                    <div class="form__button">Poster</div>     
+                </div>    
             </div>
         </div>
-        <div class="card__posts"> <!-- code en dur !! A changer-->
-            <div class="post__author">
-                <img src="../assets/albus.jpg" alt="profile Picture"/>
-            </div>
-            <div class="post__content">
-            <div class="triangle"></div>
-                <h3>Albus Dumbledore</h3>
-                <p>Devinez qui gagne la coupe des quatres maisons cette année 😂</p>
-                <p class="date">22 janvier, 19:41</p>
-            </div>
-            <div v-if="comment">
-                    <textarea class="comment__content" type="text" cols="50" rows="2" maxlength="100"></textarea>
+    <!--Publication-->   
+        <div v-for="post in posts" :key="post.id_post" class="card__post">
+            <div class="post"> <!-- code en dur !! A changer-->
+                <div class="post__author">
+                    <img src="../assets/albus.jpg" alt="profile Picture"/>
+                </div>
+                <div class="post__content" @click="showComment">
+                <div class="triangle"></div>
+                    <h3>{{ post.name }}</h3>
+                    <p>{{ post.content }}</p>
+                    <div class="deleteModify"> <!-- que pour l'utilisateur -->
+                        <p>Modifier</p>
+                        <p>Supprimer</p>
+                    </div>
+                </div>
+                <p class="date">{{ post.date }}</p>
+            </div>  
+            <div v-if="show" class="post__comment">
+                <div class="comment__pp">
+                    <img src="../assets/draco.jpg" alt="profile Picture"/>
+                </div>
+                <div class="comment__content">
+                    <h4>Drago Malfoy</h4>
+                    <p>On est premier mais comme d'hab, ça sera pas nous ..</p>
+                    <div class="deleteModify"> <!-- que pour l'utilisateur -->
+                        <p>Modifier</p>
+                        <p>Supprimer</p>
+                    </div>
+                </div> 
             </div>
             <div class="post__button">
                 <div class="button">Liker</div> 
                 <div class="button" @click="whriteComment">Commenter</div>
-            </div>
-        </div>
-        <div class="card__posts"> <!-- code en dur !! A changer-->
-            <div class="post__author">
-                <img src="../assets/ron.jpg" alt="profile Picture"/>
-            </div>
-            <div class="post__content">
-            <div class="triangle"></div>
-                <h3>Ronald Wesley</h3>
-                <p>Quelqu'un a une baguette a me prêter ? J'ai encore cassé la mienne 😅 </p>
-                <p class="date">25 janvier, 20:00</p>
-            </div>
-            <div class="post__button">
-                <div class="button">Liker</div> 
-                <div class="button">Commenter</div>
-            </div>
-        </div>
-    </div>
+            </div> 
+            <div v-if="whrite" class="comment">
+                <textarea class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
+                <button class="comment__button"><fa icon="paper-plane" /></button>
+            </div> 
+        </div>   
+    <!--End-Publication-->         
+</div>
+<!--End-Feed-->
+<!--Navigation-->    
     <div class="card__nav">   
         <div class="nav__button" @click="showUser">
             <fa icon="user" />
         </div>
         <div v-if="display" class="nav__user">
+            <div class="user__pp">
+                <img src="../assets/harry.jpg" alt="profile Picture"/>
+            </div>
+            <div class="user__name">
+                <p>Harry</p>
+                <p>Potter</p>
+            </div>
+            <div class="user__email">
+                <span>harry.potter@groupomania.fr</span>
+            </div>
+            <div class="user__update">
+                Modifier
+            </div>
+            <div class="user__update">
+                Modifier le mot de passe
+            </div>
+            <div class="user__delete">
+                Supprimer le compte
+            </div>
         </div>
         <div class="nav__button">
             <fa icon="moon" />
@@ -59,6 +94,7 @@
             <fa icon="door-open" />
         </div>
     </div>
+<!--End-Navigation-->    
 </div>      
 </template>
 
@@ -69,7 +105,8 @@ export default {
     data: function(){
         return {
             display: false,
-            comment: false,
+            whrite: false,
+            show: false,
         }
     },
     mounted: function () {
@@ -78,8 +115,16 @@ export default {
             this.$router.push('/login');
             return;
         }
-        this.$store.dispatch('getUserDatas');
+        console.log(this.$store.state.posts);
+        // this.$store.dispatch('getUserDatas');
         this.$store.dispatch('getPosts');
+        this.$store.dispatch('getComments');
+        console.log(this.$store.state.user);
+    },
+    computed: {
+        posts() {
+            return this.$store.state.posts
+        }
     },
     methods: {
         logout: function () {
@@ -89,9 +134,13 @@ export default {
         showUser() {
             this.display = !this.display;
         },
+        showComment() {
+            this.show = !this.show;
+        },    
         whriteComment() {
-            this.comment = !this.comment;
-        }
+            this.whrite = !this.whrite;
+        },
+
     }, 
 }
 
@@ -151,26 +200,26 @@ body {
                 }
             }
             .form__content {
+                display: flex;
+                flex-direction: column;
                 width: 80%;
-                background: #e6e6e6;
+                background: white;
                 padding: 20px;
-                padding-top: 10px;
+                padding-right: 0px;
+                padding-top: 0px;
                 padding-bottom: 10px;
-                border-radius: 8px 8px 8px 8px ;
-                box-shadow: 5px 5px 5px #bfbfbf;
                 margin: 25px;
+                margin-bottom: 0px;
                 margin-top: 0px;
-                margin-bottom: 25px;
                 .form__input {
                     padding:8px;
                     border: none;
-                    background: #e6e6e6;
+                    background: white;
                     font-weight: 500;
                     font-size: .8em;
                     min-width: 100px;
                     width: 100%;
                     resize : none;
-                    rows: "3";
                     &:hover{
                         border: none;
                         outline: none;
@@ -180,17 +229,43 @@ body {
                         outline: none;
                     }
                 }
+                .from__send {
+                    display: flex;
+                    justify-content: flex-end;
+                    .form__button {
+                        border: none;
+                        border-radius: 8px;
+                        height:30px;
+                        width: 30%;
+                        color: white;
+                        background: #091F43;
+                        margin-left: 20px;
+                        text-align: center;
+                        padding-top: 5px;
+                        font-size: 0.8em;
+                        transition: .4s background-color;
+                        &:hover {
+                            cursor:pointer;
+                            border-radius: 8px;
+                            color: #091F43;
+                            background: white;
+                        }   
+                    }
+                    .form__addImg {
+                        padding: 5px;
+                    }
+                }    
             }
 
         }
-        .card__posts {
+    .card__post{  
+        .post {
             margin: 25px;
             margin-bottom: 10px;
             max-width: 100%;
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
-            
+            flex-wrap: wrap;
             .post__author{
                 border: none;
                 width: 50px;
@@ -213,16 +288,29 @@ body {
                 padding-bottom: 10px;
                 border-radius: 0px 8px 8px 8px ;
                 box-shadow: 5px 5px 5px #b0b0b0;
+                h3 {
+                    font-size : 1em;
+                }
                 p {
                     margin-top:10px;
                     margin-bottom:10px;
                     font-size: .8em;
                 }
-                .date {
-                    text-align: end;
-                    font-size: 0.6em;
-                    margin-bottom: 0px;
+                .deleteModify {
+                    display: flex;
+                    justify-content: flex-end;
+                    p {
+                        font-size: 0.6em;
+                        padding-left: 8px;
+                        margin-bottom: 0px;
+
+                    }
                 }
+            }
+            .date {
+                text-align: end;
+                font-size: 0.6em;
+                margin-bottom: 0px;
             }
             .triangle {
                 position: absolute;
@@ -234,44 +322,92 @@ body {
                 border-right: 0px solid transparent;
                 border-top: 20px solid #cfcfcf;
             }
-            .post__button{
-                width: 100%;
-                display:flex;
-
-                justify-content: space-between;
-                border-bottom:  1px  solid #b0b0b0;
-                margin-top: 20px;
-                .button {
-                    border: none;
-                    height:30px;
-                    background: transparent;
+        }  
+        .post__comment {
+            display: flex;
+            margin-left: 135px;
+            .comment__pp {
+            min-width: 25px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px #b0b0b0;
+            margin-right: 10px;
+                img {
                     width: 100%;
-                    margin-left:30px;
-                    margin-right:30px;
-                    text-align: center;
-                    padding-top: 5px;
-                    font-size: 0.8em;
-                    transition: .4s background-color;
-                    &:hover {
-                        cursor:pointer;
-                        border-radius: 8px;
-                        color: white;
-                        background: #091F43;
-                    }
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 8px;
                 }
-            } 
+            }    
             .comment__content {
+            width: 100%;
+            padding: 8px;
+            margin-right: 25px;
+            border: none;
+            background: #e6e6e6;
+            font-weight: 500;
+            font-size: .6em;
+            min-width: 100px;
+            border-radius: 8px 8px 8px 8px ;
+            box-shadow: 3px 3px 5px #b0b0b0;
+            }
+            .deleteModify {
+                display: flex;
+                justify-content: flex-end;
+                p {
+                    font-size: 0.8em;
+                    padding-left: 8px;
+
+                }
+            }
+        }  
+        .post__button{
+            width: 100%;
+            display:flex;
+
+            justify-content: space-between;
+            
+            margin-top: 20px;
+            .button {
+                border: none;
+                border-radius: 8px;
+                height:30px;
+                background: transparent;
+                width: 100%;
+                margin-left:30px;
+                margin-right:30px;
+                margin-bottom: 10px;
+                text-align: center;
+                padding-top: 5px;
+                font-size: 0.8em;
+                transition: .4s background-color;
+                &:hover {
+                    cursor:pointer;
+                    border-radius: 8px;
+                    color: white;
+                    background: #091F43;
+                }
+            }
+        }
+        .comment {
+            display: flex;
+            margin-left: 130px;
+            margin-top: 10px;
+            margin-right: 25px;
+            margin-bottom: 10px;
+            .comment__whriteContent {
                 width: 100%;
                 padding:8px;
                 border: none;
-                margin-top: 10px;
-                margin-left: 110px;
+                border-right: solid 1px #091F43;
                 background: #e6e6e6;
                 font-weight: 500;
                 font-size: .6em;
                 min-width: 100px;
-                border-radius: 8px 8px 8px 8px ;
-                box-shadow: 5px 5px 5px #b0b0b0;
+                border-radius: 8px 0px 0px 8px ;
+                box-shadow: 3px 3px 5px #b0b0b0;
                 resize : initial;
                 &:hover{
                     border: none;
@@ -281,8 +417,23 @@ body {
                     border: none;
                     outline: none;
                 }
-            }   
+            } 
+            .comment__button {
+                width: 40px;
+                padding: 5px; 
+                border: none;
+                background: #e6e6e6;
+                box-shadow: 5px 5px 5px #b0b0b0;
+                border-radius: 0px 8px 8px 0px ;
+                &:hover {
+                    cursor:pointer;
+                    border-radius: 0px 8px 8px 0px ;;
+                    color: white;
+                    background: #091F43;
+                }
+            }
         }
+    }      
     }
     .card__nav {
         position: relative;
@@ -296,6 +447,71 @@ body {
             border-radius: 16px;
             width: 250px;
             height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            .user__pp {
+                border: none;
+                width: 80px;
+                height: 80px;
+                border-radius: 16px;
+                box-shadow: 2px 2px 5px #b0b0b0;
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 16px;
+                }
+            }
+            .user__name {
+                display: flex;
+                p {
+                    padding: 3px;
+                }
+            }
+            .user__email {
+                font-size: 0.6em;
+
+            }
+            .user__update {
+                border: none;
+                border-radius: 8px;
+                height:30px;
+                width: 100%;
+                color: white;
+                background: #091F43;
+                text-align: center;
+                padding: 5px;
+                margin-top: 10px;
+                font-size: 0.8em;
+                transition: .4s background-color;
+                &:hover {
+                    cursor:pointer;
+                    border-radius: 8px;
+                    color: #091F43;
+                    background: red;
+                } 
+            }
+            .user__delete {
+                border: none;
+                border-radius: 8px;
+                height:30px;
+                width: 100%;
+                color: white;
+                background: red;
+                text-align: center;
+                padding-top: 5px;
+                margin-top: 20px;
+                font-size: 0.8em;
+                transition: .4s background-color;
+                &:hover {
+                    cursor:pointer;
+                    border-radius: 8px;
+                    color: #091F43;
+                    background: red;
+                }
+            }
         }
         .nav__button {
             position: relative;
