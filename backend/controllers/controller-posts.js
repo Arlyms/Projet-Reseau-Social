@@ -13,6 +13,18 @@ const ControllerPosts = {
         });
     });
   },
+
+  findByPost: function (req, res, next) {
+    Posts.findAllComment(req.body)
+    .then(result => {
+      res.status(200).json(result);})
+    .catch(error => {
+        res.status(500).json({
+            message: 'erreur'
+        });
+    });
+  }, 
+
   //Good//
   addPost: function (req, res, next) {
     console.log(req.body);
@@ -37,18 +49,6 @@ const ControllerPosts = {
     res.status(exception).send("Post supprimé !");
     }
   },
-
-/*  findAllComment: function (req, res, next) {
-    Posts.findAllComment(req.body)
-    .then(result => {
-      res.status(200).json(result);})
-    .catch(error => {
-        res.status(500).json({
-            message: 'erreur'
-        });
-    });
-  }, 
-*/  
 
   addComment: async function (req, res, next) {
     console.log(req.body);

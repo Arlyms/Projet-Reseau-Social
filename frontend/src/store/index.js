@@ -13,7 +13,6 @@ export default createStore({
       token: '',
     },
     userDatas:[],
-    posts:[],
     comments: [],
   },
   mutations: {
@@ -26,9 +25,6 @@ export default createStore({
     },
     userDatas: function (state, userDatas){
       state.userDatas = userDatas;
-    },
-    SET_POSTS: function (state, posts){
-      state.posts = posts;
     },
     SET_COMMENTS: function (state, comments){
       state.comments = comments;
@@ -74,14 +70,8 @@ export default createStore({
       .catch(function () {
       })
     },
-    getPosts: ({commit}) =>{
-      instance.get('/posts/') 
-      .then(function (response) {
-        console.log(response.data)
-        commit('SET_POSTS', response.data);
-      })
-      .catch(function () { 
-      })
+    getPosts: () =>{
+      return instance.get('/posts/'); 
     },
     getComments: ({commit}) =>{
       instance.get('/posts/comments') 
@@ -92,7 +82,6 @@ export default createStore({
       .catch(function () { 
       })
     }
-
   }, 
   modules: {
     

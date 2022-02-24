@@ -25,9 +25,9 @@
                 <div class="post__author">
                     <img src="../assets/albus.jpg" alt="profile Picture"/>
                 </div>
-                <div class="post__content" @click="showComment">
+                <div class="post__content" @click="showComment(post)">
                 <div class="triangle"></div>
-                    <h3>{{ post.name }}</h3>
+                    <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
                     <div class="deleteModify"> <!-- que pour l'utilisateur -->
                         <p>Modifier</p>
@@ -36,7 +36,7 @@
                 </div>
                 <p class="date">{{ post.date }}</p>
             </div>  
-            <div v-if="show" class="post__comment">
+            <div v-if="post.showw" class="post__comment">
                 <div class="comment__pp">
                     <img src="../assets/draco.jpg" alt="profile Picture"/>
                 </div>
@@ -50,10 +50,9 @@
                 </div> 
             </div>
             <div class="post__button">
-                <div class="button">Liker</div> 
-                <div class="button" @click="whriteComment">Commenter</div>
+                <div class="button" @click="whriteComment(post)">Commenter</div>
             </div> 
-            <div v-if="whrite" class="comment">
+            <div v-if="post.whrite" class="comment">
                 <textarea class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
                 <button class="comment__button"><fa icon="paper-plane" /></button>
             </div> 
@@ -106,25 +105,20 @@ export default {
         return {
             display: false,
             whrite: false,
-            show: false,
+            posts: [],
         }
     },
     mounted: function () {
-        console.log(this.$store.state.user);
         if (this.$store.state.user.id_user == -1) {
             this.$router.push('/login');
             return;
         }
         console.log(this.$store.state.posts);
         // this.$store.dispatch('getUserDatas');
-        this.$store.dispatch('getPosts');
+        this.$store.dispatch('getPosts')
+        .then (res => {this.posts = res.data});
         this.$store.dispatch('getComments');
         console.log(this.$store.state.user);
-    },
-    computed: {
-        posts() {
-            return this.$store.state.posts
-        }
     },
     methods: {
         logout: function () {
@@ -134,23 +128,18 @@ export default {
         showUser() {
             this.display = !this.display;
         },
-        showComment() {
-            this.show = !this.show;
+        showComment(post) {
+        post.showw = !post.showw;
         },    
-        whriteComment() {
-            this.whrite = !this.whrite;
+        whriteComment(post) {
+        post.whrite = !post.whrite;
         },
-
     }, 
 }
 
 </script>
 
 <style lang="scss" scoped>
-
-body {
-    align-items: start;
-}
 
 .card {
     display: flex;
@@ -303,7 +292,6 @@ body {
                         font-size: 0.6em;
                         padding-left: 8px;
                         margin-bottom: 0px;
-
                     }
                 }
             }
@@ -364,16 +352,15 @@ body {
             }
         }  
         .post__button{
-            width: 100%;
+            width: 30%;
             display:flex;
-
-            justify-content: space-between;
-            
+            justify-content: flex-end;
             margin-top: 20px;
             .button {
                 border: none;
                 border-radius: 8px;
                 height:30px;
+                width: 30%;
                 background: transparent;
                 width: 100%;
                 margin-left:30px;

@@ -35,17 +35,17 @@
         </div> 
         
         <div class="card-right"> 
-           <img class="card-right__img1" src="../assets/icon.png" alt="logo groupomania"/> 
-           <img class="card-right__img2" src="../assets/icon-left-white-rongn.png" alt="logo groupomania"/>
+        <img class="card-right__img1" src="../assets/icon.png" alt="logo groupomania"/> 
+        <img class="card-right__img2" src="../assets/icon-left-white-rongn.png" alt="logo groupomania"/>
         </div>   
     </div>     
 </template>
-   
+
 <script>
 
 import { mapState } from 'vuex'
 
- export default {  
+export default {  
     name: 'Login',
     data: function() {
         return {
@@ -90,7 +90,7 @@ import { mapState } from 'vuex'
                 login: this.email,
                 password: this.password,
             }).then(function () {
-               self.login();
+            self.login();
             },function (error) {
                 console.log("c'est ici");
                 console.log(error);
@@ -102,8 +102,8 @@ import { mapState } from 'vuex'
                 login: this.email,
                 password: this.password,
             }).then(function () {
-              self.$router.push('/feed');
-              console.log("Tout est good !! ");
+            self.$router.push('/feed');
+            console.log("Tout est good !! ");
             }, function (error) {
                 console.log(error);
             })

@@ -28,7 +28,7 @@ export default{
 };
 
 body {
-  background-image: linear-gradient(white 0%,#D1515A 100% /** comment structurer en sasss ? (color-primary) **/);
+  background-image: linear-gradient(#f39298 0%,#D1515A 100% /** comment structurer en sasss ? (color-primary) **/);
   display: flex;
   justify-content: center;
   min-height: 100vh;
