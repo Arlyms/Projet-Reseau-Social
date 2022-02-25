@@ -12,7 +12,7 @@ const routes = [
     meta: {
       title: 'Feed'
     }
-  }, {
+  }, { 
     name: 'Login',
     path: '/login',
     component: Login,

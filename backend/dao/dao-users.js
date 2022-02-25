@@ -29,9 +29,7 @@ const Users = {
     return new Promise((resolve, reject) => {
       const query =
         'INSERT INTO `users` (firstName, name, login, password) VALUES (?, ?, ?, ?);';
-
       const hashedPassword = Users.hashValue(userData.password);
-
       database.query(
         query,
         [userData.firstName, userData.name, userData.login, hashedPassword],
