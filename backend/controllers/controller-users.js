@@ -1,4 +1,5 @@
 const Users = require("../dao/dao-users");
+const jwt = require("jsonwebtoken");
 
 const ControllerUsers = {
   
@@ -17,30 +18,18 @@ const ControllerUsers = {
   login: async function (req, res, next) {
     try {
       const user = await Users.findOne(req.body.login, req.body.password);
-      res.status(200).send("Connecté !");
+      res.status(200).json({
+        userId: user.id_user,
+        token: jwt.sign(
+          { userId: user.id_user},
+          'SECRET_KEY',
+          { expiresIn: '24h' }
+        )
+      });
     } catch (exception) {
       res.status(exception).send("Erreur");
     }
   },
-
-  validatetoken :async function (req, res, next) {
-    try {
-      const token = req.headers.authorization.split(' ')[1]; // récupération du token 
-      const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-      const userId = decodedToken.userId;
-      req.auth = { userId };
-      if (req.body.userId && req.body.userId !== userId) {
-        throw 'Invalid user ID';
-      } else {
-        next();
-      }
-    } catch {
-      res.status(401).json({
-        error: new Error('Invalid request!')
-      });
-    }
-  },
-
   updateUser: async function (req, res, next) {
     try {
       const user = await Users.update(req.body);

@@ -4,8 +4,8 @@ const auth = require('../middleware/auth')
 const router = express.Router();
 
 //posts
-router.post('/', ControllerPosts.addPost); 
-router.get('/', ControllerPosts.findAllPost);
+router.post('/', auth, ControllerPosts.addPost); 
+router.get('/', auth, ControllerPosts.findAllPost);
 router.put('/:id', auth, ControllerPosts.updatePost);
 router.delete('/:id', auth, ControllerPosts.deletePost);
 

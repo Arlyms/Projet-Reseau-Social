@@ -87,7 +87,7 @@ const Users = {
 
   myProfil: function (userData) {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT firstName, name, login, pictureProfil FROM `users` WHERE id_user = ?;';
+      const query = 'SELECT firstName, name, login, pictureProfil FROM `users` WHERE id_user;';
         database.query(
           query,
           [userData.id_user], 

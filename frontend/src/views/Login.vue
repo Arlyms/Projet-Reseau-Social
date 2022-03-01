@@ -91,7 +91,6 @@ export default {
             }).then(function () {
             self.login();
             },function (error) {
-                console.log("c'est ici");
                 console.log(error);
             })
         },

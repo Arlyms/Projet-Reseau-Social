@@ -15,7 +15,7 @@ const ControllerPosts = {
   },
 
   findByPost: function (req, res, next) {
-    Posts.findAllComment(req.body)
+    Posts.findAllComment(req.params.id)
     .then(result => {
       res.status(200).json(result);})
     .catch(error => {
@@ -35,6 +35,7 @@ const ControllerPosts = {
   updatePost: async function (req, res, next) {
     try {
         const Posts = await Posts.updatePost(req.body);
+
         res.status(200).send();
     } catch (exception) {
     res.status(exception).send("Post modifié !");
@@ -44,6 +45,7 @@ const ControllerPosts = {
   deletePost: async function (req, res, next) {
     try {
         const Posts = await Posts.deletePost(req.body);
+        
         res.status(200).send();
     } catch (exception) {
     res.status(exception).send("Post supprimé !");

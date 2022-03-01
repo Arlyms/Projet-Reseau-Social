@@ -26,9 +26,6 @@ export default createStore({
     userDatas: function (state, userDatas){
       state.userDatas = userDatas;
     },
-    SET_COMMENTS: function (state, comments){
-      state.comments = comments;
-    }
   },
   actions: {
     createAccount: ({commit}, userDatas) => {
@@ -63,7 +60,7 @@ export default createStore({
       });  
     },
     getUserDatas: ({commit}) => {
-      instance.get('/auth/:id') 
+      instance.get('/auth/') 
       .then(function (response) {
         commit('userDatas', response.data);
       })
@@ -73,16 +70,10 @@ export default createStore({
     getPosts: () =>{
       return instance.get('/posts/'); 
     },
-    getComments: ({commit}) =>{
-      instance.get('/posts/comments') 
-      .then(function (response) {
-        console.log(response.data)
-        commit('SET_COMMENTS', response.data);
-      })
-      .catch(function () { 
-      })
-    }
-  }, 
+    getComments: (_, id) =>{
+      return instance.get('/posts/'+ id +'/comments') 
+    }, 
+  },  
   modules: {
     
   }

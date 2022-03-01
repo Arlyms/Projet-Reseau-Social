@@ -36,7 +36,7 @@
                 </div>
                 <p class="date">{{ post.date }}</p>
             </div>  
-            <div v-if="post.showw" class="post__comment">
+            <div v-if="post.showw" class="post__comment"> <!-- v-for="comments in post.comments" -->
                 <div class="comment__pp">
                     <img src="../assets/draco.jpg" alt="profile Picture"/>
                 </div>
@@ -82,23 +82,22 @@ export default {
         Navigation,
     },
     mounted: function () {
+        console.log(this.$store.state.user);
         if (this.$store.state.user.id_user == -1) {
             this.$router.push('/login');
             return;
         }
-        console.log(this.$store.state.posts);
-        // this.$store.dispatch('getUserDatas');
-        this.$store.dispatch('getPosts')
+        this.$store.dispatch('getPosts') // recuperation des posts
         .then (res => {this.posts = res.data});
-        this.$store.dispatch('getComments');
-        console.log(this.$store.state.user);
+
+        this.$store.dispatch('getUserDatas'); // recuperation des infos du user connecté
+        
     },
     methods: {
-        logout: function () {
-        //ajouter un "this.$store.commit('logout');"
-        this.$router.push('/login');
-        },
         showComment(post) {
+        console.log(post);
+        this.$store.dispatch('getComments', post.id_post)
+        .then (res => post.comments = res.data);
         post.showw = !post.showw;
         },    
         whriteComment(post) {
