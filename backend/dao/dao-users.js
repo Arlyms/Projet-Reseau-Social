@@ -85,15 +85,15 @@ const Users = {
 
   // Show my profile
 
-  myProfil: function (userData) {
+  myProfil: function (userId) {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT firstName, name, login, pictureProfil FROM `users` WHERE id_user;';
-        database.query(
-          query,
-          [userData.id_user], 
+      const query = 'SELECT firstName, name, login, pictureProfile FROM users WHERE id_user = ? ;';
+      console.log(userId);
+      database.query(
+          query,userId, 
           (err, results, fields) => { // fields ? 
           if (err) {
-            console.log("Erreur !!");
+            console.log(err);
             reject();
           }
           resolve(results);

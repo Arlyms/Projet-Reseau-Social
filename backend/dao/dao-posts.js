@@ -27,9 +27,9 @@ const Posts = {
 
     createPost: function (postData) {
         return new Promise((resolve, reject) => {
-          const query = 'INSERT INTO `posts` (content, date, id_user, id_like) VALUES (?,?,?,?)';
+          const query = 'INSERT INTO `posts` (content, date, id_user) VALUES (?,?,?)';
           // Contenu : le message / la date / l'id de l'auteur / le nombre de like
-          database.query(query,[postData.content, postData.date, postData.id_user, postData.id_like],(err, results, fields) => {
+          database.query(query,[postData.content, postData.date, postData.id_user],(err, results, fields) => {
             if (err) throw err;
             console.log(results, {message : "Nouveau Post !"});
           });

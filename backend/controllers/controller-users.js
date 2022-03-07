@@ -10,9 +10,9 @@ const ControllerUsers = {
   },
 
   showUser: async function (req, res, next) {
-    console.log(req.body);
-    await Users.myProfil(req.body);
-    res.send();
+    console.log(req.auth);
+    const user = await Users.myProfil(req.auth.userId);
+    res.status(200).json(user);
   },
 
   login: async function (req, res, next) {
@@ -20,6 +20,9 @@ const ControllerUsers = {
       const user = await Users.findOne(req.body.login, req.body.password);
       res.status(200).json({
         userId: user.id_user,
+        firstName:  user.firstName,
+        name: user.name,
+        email: user.login,
         token: jwt.sign(
           { userId: user.id_user},
           'SECRET_KEY',

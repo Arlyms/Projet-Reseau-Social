@@ -8,20 +8,20 @@
             <img src="../assets/harry.jpg" alt="profile Picture"/>
         </div>
         <div class="user__name">
-        <p>Harry</p>
-        <p>Potter</p>
+        <p>{{ user.firstName }}</p>
+        <p>{{ user.name }}</p>
         </div>
         <div class="user__name" v-if="modify"> <!-- Modification -->
-            <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/>
+            <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/> 
             <input v-model="nom" class="form__input" type="text" placeholder="Nom"/>
         </div>
         <div class="user__email">
-            <span>harry.potter@groupomania.fr</span>
+            <span>{{ user.email }}</span>
         </div>
         <div class="user__email" v-if="modify"> <!-- Modification -->
             <input v-model="email" class="form__input" type="text" placeholder="Adresse mail"/>
         </div>
-        <div @click="update()" class="user__update">
+        <div @click="switchToUpdate()" class="user__update">
             Modifier
         </div>
         <div class="user__update">
@@ -31,9 +31,9 @@
             Supprimer le compte
         </div>
     </div>
-    <div class="nav__button">
+<!--<div class="nav__button">
         <fa icon="moon" />
-    </div>
+    </div>-->
     <div @click="logout()" class="nav__button">
         <fa icon="door-open" />
     </div>
@@ -41,10 +41,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     name: 'Navigation',
     data: function(){
     return{
+        mode: 'normal',
         display: false,
         modify: false,
         prenom: '',
@@ -63,10 +65,13 @@ export default {
         showUser() {
         this.display = !this.display; // remplacer user.display à terme ? 
         },
-        update() {
+        switchToUpdate() {
         this.modify = !this.modify;
         }
     },
+    computed : {
+        ...mapState(['user'])
+    }
 }
 </script>
 
@@ -80,7 +85,7 @@ export default {
         z-index: 3;
         position: absolute;
         right: 82px;
-        background: white;
+        background-image: linear-gradient(white 0%, #e2e2e2 100%);
         border-radius: 16px;
         min-width: 250px;
         min-height: 300px;
@@ -151,7 +156,8 @@ export default {
     }
     .nav__button {
         position: relative;
-        background: white;
+        background-color: #D1515A;
+        color: white;
         border-radius: 16px;
         border: none;
         width: 50px;

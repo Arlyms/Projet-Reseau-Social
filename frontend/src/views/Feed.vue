@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card__head">
-        <img src="../assets/icon-left-font-monochrome-black.png" alt="logo groupomania"/>
+        <img src="../assets/icon-left-font-monochrome-white.png" alt="logo groupomania"/>
     </div> 
 <!--Feed-->    
     <div class="card__feed">
@@ -10,12 +10,12 @@
                 <img src="../assets/harry.jpg" alt="profile Picture"/>
             </div>
             <div class="form__content">
-                <textarea class="form__input" type="text"  placeholder="Quoi de neuf, Harry ? " row="1" maxlength="250"></textarea>
+                <textarea v-model="content" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
                 <div class="from__send">
                     <div class="form__addImg">
                         <fa icon="image" />
                     </div>
-                    <div class="form__button">Poster</div>     
+                    <div @click="createPost()" class="form__button"> Poster </div>     
                 </div>    
             </div>
         </div>
@@ -26,7 +26,6 @@
                     <img src="../assets/albus.jpg" alt="profile Picture"/>
                 </div>
                 <div class="post__content" @click="showComment(post)">
-                <div class="triangle"></div>
                     <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
                     <div class="deleteModify"> <!-- que pour l'utilisateur -->
@@ -69,6 +68,7 @@
 
 <script>
 import Navigation from "../components/Navigation.vue"
+import { mapState } from "vuex"
 
 export default {
     name: 'Feed',
@@ -76,22 +76,20 @@ export default {
         return {
             whrite: false,
             posts: [],
+            content:'',
         }
     },
     components: {
         Navigation,
     },
     mounted: function () {
-        console.log(this.$store.state.user);
         if (this.$store.state.user.id_user == -1) {
             this.$router.push('/login');
             return;
         }
         this.$store.dispatch('getPosts') // recuperation des posts
         .then (res => {this.posts = res.data});
-
-        this.$store.dispatch('getUserDatas'); // recuperation des infos du user connecté
-        
+        // this.$store.dispatch('getUserDatas');// recuperation des infos du user connecté
     },
     methods: {
         showComment(post) {
@@ -103,7 +101,21 @@ export default {
         whriteComment(post) {
         post.whrite = !post.whrite;
         },
-    }, 
+        createPost: function () {
+            this.$store.dispatch('createPost', {
+                content: this.content,
+                id_user: this.user.userId,
+                // ajoutre la date , La prendre dans le header ? ( Attention : remettre la dat en non null) 
+            });
+            this.$router.go('/feed'),
+            function (error) {
+                console.log(error);
+            }
+        }        
+    },
+    computed : {
+        ...mapState(['user'])
+    }
 }
 
 </script>
@@ -118,7 +130,7 @@ export default {
     max-width: 100%;
     width: 600px;
     height : 10px;
-    background: linear-gradient(transparent 0%,#b0b0b0 100%);
+    background-image: linear-gradient(160deg,#D1515A 0%,#091F43 70%, #091F43 100%);
     border-radius: 8px 8px 0px 0px;
     padding:25px;
         img {
@@ -135,7 +147,7 @@ export default {
     max-width: 100%;
     width: 600px;
     height : 100%;
-    background: white;
+    background: #ffe3e5;
     border-radius: 8px 8px 8px 8px;
         .card__form {
             max-width: 100%;
@@ -161,7 +173,7 @@ export default {
                 display: flex;
                 flex-direction: column;
                 width: 80%;
-                background: white;
+                background: #ffe3e5;
                 padding: 20px;
                 padding-right: 0px;
                 padding-top: 0px;
@@ -172,7 +184,7 @@ export default {
                 .form__input {
                     padding:8px;
                     border: none;
-                    background: white;
+                    background: #ffe3e5;
                     font-weight: 500;
                     font-size: .8em;
                     min-width: 100px;
@@ -239,12 +251,12 @@ export default {
             .post__content{
                 position: relative;
                 width: 80%;
-                background: #cfcfcf;
+                background-image: linear-gradient(rgb(255, 255, 255) 0%, #e9e9e9 100%);
                 padding: 20px;
                 padding-top: 10px;
                 padding-bottom: 10px;
                 border-radius: 0px 8px 8px 8px ;
-                box-shadow: 5px 5px 5px #b0b0b0;
+                box-shadow: 5px 5px 5px #c9c9c9;
                 h3 {
                     font-size : 1em;
                 }
@@ -267,16 +279,6 @@ export default {
                 text-align: end;
                 font-size: 0.6em;
                 margin-bottom: 0px;
-            }
-            .triangle {
-                position: absolute;
-                left: -20px;
-                top: 0px;
-                width: 0;
-                height: 0;
-                border-left: 20px solid transparent;
-                border-right: 0px solid transparent;
-                border-top: 20px solid #cfcfcf;
             }
         }  
         .post__comment {
@@ -302,11 +304,11 @@ export default {
             padding: 8px;
             margin-right: 25px;
             border: none;
-            background: #e6e6e6;
+            background-image: linear-gradient(rgb(231, 231, 231) 0%, #d8d8d8 100%);
             font-weight: 500;
             font-size: .6em;
             min-width: 100px;
-            border-radius: 8px 8px 8px 8px ;
+            border-radius: 0px 8px 8px 8px ;
             box-shadow: 3px 3px 5px #b0b0b0;
             }
             .deleteModify {

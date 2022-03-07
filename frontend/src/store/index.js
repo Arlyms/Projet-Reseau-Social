@@ -10,7 +10,6 @@ export default createStore({
     status: '',
     user:{
       id_user: -1,
-      token: '',
     },
     userDatas:[],
     comments: [],
@@ -20,7 +19,7 @@ export default createStore({
       state.status = status;
     },
     logUser : function (state, user) {
-      instance.defaults.headers.common['Authorization'] = user.token;
+      instance.defaults.headers.common['Authorization'] = 'bearer ' + user.token;
       state.user = user;
     },
     userDatas: function (state, userDatas){
@@ -43,6 +42,16 @@ export default createStore({
           reject(error);
         })
       });  
+    },
+    createPost: ({commit}, postInfos) => { 
+        commit;
+        instance.post('/posts/', postInfos)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
     },
     login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
