@@ -35,8 +35,8 @@ const ControllerUsers = {
   },
   updateUser: async function (req, res, next) {
     try {
-      const user = await Users.update(req.body);
-      res.status(200).send();
+      const user = await Users.update(req.auth.userId);
+      res.status(200).send(user);
     } catch (exception) {
       res.status(exception).send();
     }

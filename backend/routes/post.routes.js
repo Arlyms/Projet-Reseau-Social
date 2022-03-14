@@ -13,7 +13,7 @@ router.put('/:id', auth, ControllerPosts.updatePost);
 router.delete('/:id', auth, ControllerPosts.deletePost);
 
 //comments
-router.post('/:id/comments', auth, ControllerPosts.addComment);
+router.post('/comments', auth, ControllerPosts.addComment);
 router.get('/:id/comments', auth, ControllerPosts.findByPost);
 router.put('/comments/:id', auth, ControllerPosts.updateComment);
 router.delete('/comments/:id', auth, ControllerPosts.deleteComment);

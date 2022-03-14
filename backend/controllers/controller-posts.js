@@ -26,16 +26,18 @@ const ControllerPosts = {
   }, 
 
   //Good//
-  addPost: function (req, res, next) {
+  addPost: async function (req, res, next) {
     console.log(req.body);
-    Posts.createPost(req.body);
-    res.send("Nouveau Post !");
+    const post =  await Posts.createPost(req.body);
+    const id = post.insertId
+    console.log(id);
+    const Newpost = await Posts.findOne(id);
+    res.send(Newpost);
   },
 
   updatePost: async function (req, res, next) {
     try {
         const Posts = await Posts.updatePost(req.body);
-
         res.status(200).send();
     } catch (exception) {
     res.status(exception).send("Post modifié !");

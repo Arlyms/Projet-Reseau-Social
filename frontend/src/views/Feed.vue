@@ -10,7 +10,7 @@
                 <img src="../assets/harry.jpg" alt="profile Picture"/>
             </div>
             <div class="form__content">
-                <textarea v-model="content" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
+                <textarea v-model="postContent" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
                 <div class="from__send">
                     <div class="form__addImg">
                         <fa icon="image" />
@@ -33,27 +33,30 @@
                         <p>Supprimer</p>
                     </div>
                 </div>
-                <p class="date">{{ post.date }}</p>
+                <p class="date--post">{{ post.date }}</p>
             </div>  
-            <div v-if="post.showw" class="post__comment"> <!-- v-for="comments in post.comments" -->
-                <div class="comment__pp">
-                    <img src="../assets/draco.jpg" alt="profile Picture"/>
-                </div>
-                <div class="comment__content">
-                    <h4>Drago Malfoy</h4>
-                    <p>On est premier mais comme d'hab, ça sera pas nous ..</p>
-                    <div class="deleteModify"> <!-- que pour l'utilisateur -->
-                        <p>Modifier</p>
-                        <p>Supprimer</p>
+            <div v-if="post.showw"  class="post__comment"> <!--1-->
+                <div class="comment" v-for="comment in post.comments" :key="comment.id_comment">
+                    <div class="comment__pp">
+                        <img src="../assets/draco.jpg" alt="profile Picture"/>
                     </div>
-                </div> 
+                    <div class="comment__content">
+                        <h4>{{ comment.firstName }} {{ comment.name }}</h4>
+                        <p>{{ comment.content }}</p>
+                        <div class="deleteModify"> <!-- que pour l'utilisateur -->
+                            <p>Modifier</p>
+                            <p>Supprimer</p>
+                        </div>
+                    </div> 
+                    <div class="date--com">{{ comment.date }}</div>
+                </div>    
             </div>
             <div class="post__button">
-                <div class="button" @click="whriteComment(post)">Commenter</div>
+                <div class="button" @click="showWhriteComment(post)">Commenter</div>
             </div> 
-            <div v-if="post.whrite" class="comment">
-                <textarea class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
-                <button class="comment__button"><fa icon="paper-plane" /></button>
+            <div v-if="post.whrite" class="comment__whrite">
+                <textarea v-model='commentContent' class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
+                <button @click="whriteComment()" class="comment__button"><fa icon="paper-plane" /></button>
             </div> 
         </div>   
     <!--End-Publication-->         
@@ -76,7 +79,8 @@ export default {
         return {
             whrite: false,
             posts: [],
-            content:'',
+            postContent: '',
+            commentContent:'',
         }
     },
     components: {
@@ -98,19 +102,22 @@ export default {
         .then (res => post.comments = res.data);
         post.showw = !post.showw;
         },    
-        whriteComment(post) {
+        showWhriteComment(post) {
         post.whrite = !post.whrite;
+        },
+        whriteComment: function () {
+            this.$store.dispatch('createComment', {
+                content: this.commentContent,
+                id_user: this.user.userId,
+                // id_post: this.posts.id_post, Comment ajouter l'id du post ? 
+            })
         },
         createPost: function () {
             this.$store.dispatch('createPost', {
-                content: this.content,
+                content: this.postContent,
                 id_user: this.user.userId,
                 // ajoutre la date , La prendre dans le header ? ( Attention : remettre la dat en non null) 
-            });
-            this.$router.go('/feed'),
-            function (error) {
-                console.log(error);
-            }
+            }).then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
         }        
     },
     computed : {
@@ -227,7 +234,8 @@ export default {
                 }    
             }
         }
-    .card__post{  
+    .card__post{      
+        border-bottom: 1px solid#b0b0b0; // sauf le dernier ? 
         .post {
             margin: 25px;
             margin-bottom: 10px;
@@ -275,50 +283,65 @@ export default {
                     }
                 }
             }
-            .date {
+            .date--post {
                 text-align: end;
                 font-size: 0.6em;
                 margin-bottom: 0px;
             }
         }  
-        .post__comment {
-            display: flex;
-            margin-left: 135px;
-            .comment__pp {
-            min-width: 25px;
-            border: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 8px;
-            box-shadow: 2px 2px 5px #b0b0b0;
-            margin-right: 10px;
-                img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 8px;
+        .post__comment{
+            .comment {
+                display: flex;
+                margin-left: 135px;
+                margin-bottom: 10px;
+                .comment__pp {
+                min-width: 25px;
+                border: none;
+                width: 25px;
+                height: 25px;
+                border-radius: 8px;
+                box-shadow: 2px 2px 5px #b0b0b0;
+                margin-right: 10px;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 8px;
+                    }
+                }    
+                .comment__content {
+                width: 100%;
+                padding: 8px;
+                margin-right: 10px;
+                border: none;
+                background-image: linear-gradient(rgb(231, 231, 231) 0%, #d8d8d8 100%);
+                font-weight: 500;
+                font-size: .6em;
+                min-width: 100px;
+                border-radius: 0px 8px 8px 8px ;
+                box-shadow: 3px 3px 5px #b0b0b0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                    h4 {
+                        width: 100%;
+                    }
+                    p{
+                        width: 70%;
+                    }
+                }
+                .deleteModify {
+                    display: flex;
+                    justify-content: flex-end;
+                    p {
+                        font-size: 0.8em;
+                        padding-left: 8px;
+                    }
+                }
+                .date--com {
+                    font-size: 0.2em;
                 }
             }    
-            .comment__content {
-            width: 100%;
-            padding: 8px;
-            margin-right: 25px;
-            border: none;
-            background-image: linear-gradient(rgb(231, 231, 231) 0%, #d8d8d8 100%);
-            font-weight: 500;
-            font-size: .6em;
-            min-width: 100px;
-            border-radius: 0px 8px 8px 8px ;
-            box-shadow: 3px 3px 5px #b0b0b0;
-            }
-            .deleteModify {
-                display: flex;
-                justify-content: flex-end;
-                p {
-                    font-size: 0.8em;
-                    padding-left: 8px;
-                }
-            }
         }  
         .post__button{
             width: 30%;
@@ -347,7 +370,7 @@ export default {
                 }
             }
         }
-        .comment {
+        .comment__whrite {
             display: flex;
             margin-left: 130px;
             margin-top: 10px;

@@ -5,6 +5,7 @@ const mysql = require("mysql2");
 
 const Posts = {
 
+//Récupération de tout les posts
     findAllPost: function () {
       return new Promise((resolve, reject) => {
         database.query('SELECT *,0 AS showw, DATE_FORMAT(date,"%y %b %d à %k:%i") AS date FROM posts p, users u WHERE p.id_user = u.id_user ORDER BY p.date DESC', 
@@ -15,9 +16,21 @@ const Posts = {
       } 
     )},
 
+//Récupération d'un seul post
+    findOne: function (id) {
+      return new Promise((resolve, reject) => {
+        database.query('SELECT *,0 AS showw, DATE_FORMAT(date,"%y %b %d à %k:%i") AS date FROM posts p, users u WHERE p.id_user = u.id_user AND id_post = ' + id, 
+        function (err, posts, fields) {
+            if (err) reject(err);
+            else resolve(posts);    
+        });
+      } 
+    )},
+
+//Récupération de tout les comentaires avec l'id d'un post    
     findAllComment: function (id) {
         return new Promise((resolve, reject) => {
-          database.query("SELECT * FROM comments WHERE comments.id_post = " + id, 
+          database.query('SELECT *, DATE_FORMAT(date,"%y %b %d %k:%i") AS date FROM comments, users WHERE comments.id_user = users.id_user AND comments.id_post = ' + id, 
           function (err, comments, fields) {
             if (err) reject(err);
             else resolve(comments);
@@ -25,16 +38,30 @@ const Posts = {
       }
     )},
 
+//Créer un nouveau post    
     createPost: function (postData) {
         return new Promise((resolve, reject) => {
-          const query = 'INSERT INTO `posts` (content, date, id_user) VALUES (?,?,?)';
+          const query = 'INSERT INTO `posts` (content, id_user) VALUES (?,?)';
           // Contenu : le message / la date / l'id de l'auteur / le nombre de like
-          database.query(query,[postData.content, postData.date, postData.id_user],(err, results, fields) => {
+          database.query(query,[postData.content, postData.id_user],(err, results, fields) => {
             if (err) throw err;
-            console.log(results, {message : "Nouveau Post !"});
+            console.log(results);
+            resolve(results);
           });
         });
     },
+
+//Créer un nouveau commentaire
+    createComment: function (commentData) {
+      return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO `comments` (content, id_user, id_post) VALUES ( ?, ? ,?);';
+        
+        database.query(query,[commentData.content, commentData.id_user, commentData.id_post],(err, results, fields) => {
+          if (err) throw err;
+          resolve(results);
+        });
+      });
+  },
 
     updatePost: function (postData) {
         return new Promise((resolve, reject) => {
@@ -52,17 +79,6 @@ const Posts = {
           const query = 'DELETE FROM `posts` WHERE id_post = ?';
           
           database.query(query,[postData.id_post],(err, results, fields) => {
-            if (err) throw err;
-            resolve(results);
-          });
-        });
-    },
-
-    createComment: function (commentData) {
-        return new Promise((resolve, reject) => {
-          const query = 'INSERT INTO `comments` (content, DATE_FORMAT((date),"%y %b %d à %k:%i"), id_user, id_post) VALUES (?, ?, ? ,?);';
-          
-          database.query(query,[commentData.content, commentData.DATE_FORMAT, commentData.id_user, commentData.id_post],(err, results, fields) => {
             if (err) throw err;
             resolve(results);
           });

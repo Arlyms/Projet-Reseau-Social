@@ -4,22 +4,25 @@
         <fa icon="user" />
     </div>
     <div v-if="display" class="nav__user">
-        <div class="user__pp">
-            <img src="../assets/harry.jpg" alt="profile Picture"/>
+        <div class="user__pp" v-if="modify">
+            <input v-model="pictureProfile" class="form__input" type="text" placeholder="Photo de Profil"/>
         </div>
-        <div class="user__name">
-        <p>{{ user.firstName }}</p>
-        <p>{{ user.name }}</p>
+        <div class="user__pp" v-else>
+            <img src="../assets/harry.jpg" alt="profile Picture"/> <!-- {{ user.pictureProfile }} -->
         </div>
         <div class="user__name" v-if="modify"> <!-- Modification -->
             <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/> 
             <input v-model="nom" class="form__input" type="text" placeholder="Nom"/>
         </div>
-        <div class="user__email">
-            <span>{{ user.email }}</span>
+        <div class="user__name" v-else>
+        <p>{{ user.firstName }}</p>
+        <p>{{ user.name }}</p>
         </div>
         <div class="user__email" v-if="modify"> <!-- Modification -->
             <input v-model="email" class="form__input" type="text" placeholder="Adresse mail"/>
+        </div>
+        <div class="user__email" v-else>
+            <span>{{ user.email }}</span>
         </div>
         <div @click="switchToUpdate()" class="user__update">
             Modifier
@@ -53,6 +56,7 @@ export default {
         nom: '',
         email: '',
         password: '',
+        pictureProfile: '',
     }
     },
     mounted: function (){
@@ -77,6 +81,9 @@ export default {
 
 
 <style scoped lang="scss">
+*{
+    color:white;
+}
 .card__nav {
     position: relative;
     display: flex;
@@ -156,7 +163,7 @@ export default {
     }
     .nav__button {
         position: relative;
-        background-color: #D1515A;
+        background-color: #091F43;
         color: white;
         border-radius: 16px;
         border: none;
@@ -168,12 +175,12 @@ export default {
         transition: .4s background-color;
         &:hover {
             cursor:pointer;
-            background: #091F43;
+            background: white;
         }
         svg {
         position: absolute;
         margin: auto;
-        color: red;
+        color: white;
         align-items: center;
         } 
     }          

@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 const axios = require('axios'); 
 
 const instance = axios.create({
@@ -45,13 +45,11 @@ export default createStore({
     },
     createPost: ({commit}, postInfos) => { 
         commit;
-        instance.post('/posts/', postInfos)
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
+        return instance.post('/posts/', postInfos)
+    },
+    createComment: ({commit}, commentInfos) => { 
+      commit;
+      return instance.post('/posts/comments', commentInfos)
     },
     login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
@@ -82,8 +80,5 @@ export default createStore({
     getComments: (_, id) =>{
       return instance.get('/posts/'+ id +'/comments') 
     }, 
-  },  
-  modules: {
-    
-  }
+  },
 })
