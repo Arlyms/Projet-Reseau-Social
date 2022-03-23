@@ -4,39 +4,25 @@
         <fa icon="user" />
     </div>
     <div v-if="display" class="nav__user">
-        <div class="user__pp" v-if="modify">
-            <input v-model="pictureProfile" class="form__input" type="text" placeholder="Photo de Profil"/>
-        </div>
-        <div class="user__pp" v-else>
+        <div class="user__pp">
             <img src="../assets/harry.jpg" alt="profile Picture"/> <!-- {{ user.pictureProfile }} -->
         </div>
-        <div class="user__name" v-if="modify"> <!-- Modification -->
-            <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/> 
-            <input v-model="nom" class="form__input" type="text" placeholder="Nom"/>
-        </div>
-        <div class="user__name" v-else>
+        <div class="user__name" >
         <p>{{ user.firstName }}</p>
         <p>{{ user.name }}</p>
         </div>
-        <div class="user__email" v-if="modify"> <!-- Modification -->
-            <input v-model="email" class="form__input" type="text" placeholder="Adresse mail"/>
-        </div>
-        <div class="user__email" v-else>
+        <div class="user__email">
             <span>{{ user.email }}</span>
         </div>
-        <div @click="switchToUpdate()" class="user__update">
-            Modifier
-        </div>
-        <div class="user__update">
-            Modifier le mot de passe
-        </div>
         <div class="user__delete">
-            Supprimer le compte
-        </div>
-    </div>
-<!--<div class="nav__button">
+            <p>Supprimer le compte</p>
+        </div> 
+    <!--<div v-if="validate" class="card__validation">
+        </div> 
+    <div class="nav__button">
         <fa icon="moon" />
     </div>-->
+    </div>
     <div @click="logout()" class="nav__button">
         <fa icon="door-open" />
     </div>
@@ -51,12 +37,7 @@ export default {
     return{
         mode: 'normal',
         display: false,
-        modify: false,
-        prenom: '',
-        nom: '',
-        email: '',
-        password: '',
-        pictureProfile: '',
+        validate: false,
     }
     },
     mounted: function (){
@@ -69,9 +50,9 @@ export default {
         showUser() {
         this.display = !this.display; // remplacer user.display à terme ? 
         },
-        switchToUpdate() {
-        this.modify = !this.modify;
-        }
+        /*showValidate() {
+        this.validate = !this.validate; 
+        },*/
     },
     computed : {
         ...mapState(['user'])
@@ -81,9 +62,7 @@ export default {
 
 
 <style scoped lang="scss">
-*{
-    color:white;
-}
+
 .card__nav {
     position: relative;
     display: flex;
@@ -93,9 +72,9 @@ export default {
         position: absolute;
         right: 82px;
         background-image: linear-gradient(white 0%, #e2e2e2 100%);
-        border-radius: 16px;
-        min-width: 250px;
-        min-height: 300px;
+        border-radius: 7px;
+        min-width: 200px;
+        min-height: 250px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -122,25 +101,6 @@ export default {
         .user__email {
             font-size: 0.6em;
         }
-        .user__update {
-            border: none;
-            border-radius: 8px;
-            height:30px;
-            width: 100%;
-            color: white;
-            background: #091F43;
-            text-align: center;
-            padding: 5px;
-            margin-top: 10px;
-            font-size: 0.8em;
-            transition: .4s background-color;
-            &:hover {
-                cursor:pointer;
-                border-radius: 8px;
-                color: #091F43;
-                background: red;
-            } 
-        }
         .user__delete {
             border: none;
             border-radius: 8px;
@@ -150,7 +110,7 @@ export default {
             background: red;
             text-align: center;
             padding-top: 5px;
-            margin-top: 20px;
+            margin-top: 50px;
             font-size: 0.8em;
             transition: .4s background-color;
             &:hover {
@@ -159,6 +119,17 @@ export default {
                 color: #091F43;
                 background: red;
             }
+        }
+        .card__validation {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            z-index: 4;
+            height: 150px;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
         }
     }
     .nav__button {

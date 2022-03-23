@@ -16,7 +16,6 @@ export default{
 
 * {
   font-family: 'Poppins', sans-serif;
-  color: #091F43;
   margin:0;
   padding: 0;
   box-sizing: border-box;

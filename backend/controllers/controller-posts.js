@@ -35,51 +35,26 @@ const ControllerPosts = {
     res.send(Newpost);
   },
 
-  updatePost: async function (req, res, next) {
-    try {
-        const Posts = await Posts.updatePost(req.body);
-        res.status(200).send();
-    } catch (exception) {
-    res.status(exception).send("Post modifié !");
-    }
-  },
-
-  deletePost: async function (req, res, next) {
-    try {
-        const Posts = await Posts.deletePost(req.body);
-        
-        res.status(200).send();
-    } catch (exception) {
-    res.status(exception).send("Post supprimé !");
-    }
+  deletePost: function (req, res, next) {
+    Posts.deletePost({id_post: req.params.id})
+      .then(() => res.status(200).json({ message: 'Post supprimé !'}))
+      .catch(error => res.status(400).json({ error }));
   },
 
   addComment: async function (req, res, next) {
     console.log(req.body);
-    await Posts.createComment(req.body);
-    res.send("Nouveau Commentaire !");
+    const comment =  await Posts.createComment(req.body);
+    const id = comment.insertId
+    console.log(id);
+    const Newcomment = await Posts.findOneComment(id);
+    res.send(Newcomment);
   },
 
-  updateComment: async function (req, res, next) {
-    try {
-        const Posts = await Posts.updateComment(req.body);
-        res.status(200).send();
-    } catch (exception) {
-    res.status(exception).send("Commentaire modifié !");
-    }
+  deleteComment: function (req, res, next) {
+    Posts.deleteComment({id_comment: req.params.id})
+    .then(() => res.status(200).json({ message: 'Commentaire supprimé !'}))
+    .catch(error => res.status(400).json({ error }));
   },
-
-  deleteComment: async function (req, res, next) {
-    try {
-        const Posts = await Posts.deleteComment(req.body);
-        res.status(200).send();
-    } catch (exception) {
-    res.status(exception).send("Commentaire supprimé !");
-    }
-  },
-
-// Voir likes avec charles // 
-
 };
 
 module.exports = ControllerPosts;

@@ -33,22 +33,10 @@ const ControllerUsers = {
       res.status(exception).send("Erreur");
     }
   },
-  updateUser: async function (req, res, next) {
-    try {
-      const user = await Users.update(req.auth.userId);
-      res.status(200).send(user);
-    } catch (exception) {
-      res.status(exception).send();
-    }
-  },
-
-  deleteUser: async function (req, res, next) {
-    try {
-      const user = await Users.delete(req.body);
-      res.status(200).send();
-    } catch (exception) {
-      res.status(exception).send();
-    }
+  deleteUser: function (req, res, next) {
+    Users.deleteUser({id_user: req.auth.userId})
+      .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
+      .catch(error => res.status(400).json({ error }));
   },
 };
 

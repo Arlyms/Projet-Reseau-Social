@@ -15,12 +15,12 @@
                     <div class="form__addImg">
                         <fa icon="image" />
                     </div>
-                    <div @click="createPost()" class="form__button"> Poster </div>     
+                    <div @click="createPost()"  class="form__button" :class="{'form__button--disabled' : !textFieldsPost}"> Poster </div>     
                 </div>    
             </div>
         </div>
     <!--Publication-->   
-        <div v-for="post in posts" :key="post.id_post" class="card__post">
+        <div v-for="(post,index) in posts" :key="post.id_post" class="card__post">
             <div class="post"> <!-- code en dur !! A changer-->
                 <div class="post__author">
                     <img src="../assets/albus.jpg" alt="profile Picture"/>
@@ -29,8 +29,7 @@
                     <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
                     <div class="deleteModify"> <!-- que pour l'utilisateur -->
-                        <p>Modifier</p>
-                        <p>Supprimer</p>
+                        <button @click="deletePost(post.id_post,index)">Supprimer</button>
                     </div>
                 </div>
                 <p class="date--post">{{ post.date }}</p>
@@ -44,19 +43,18 @@
                         <h4>{{ comment.firstName }} {{ comment.name }}</h4>
                         <p>{{ comment.content }}</p>
                         <div class="deleteModify"> <!-- que pour l'utilisateur -->
-                            <p>Modifier</p>
-                            <p>Supprimer</p>
+                            <p @click="deletePost(post.id_comment,index)">Supprimer</p>
                         </div>
                     </div> 
                     <div class="date--com">{{ comment.date }}</div>
                 </div>    
             </div>
             <div class="post__button">
-                <div class="button" @click="showWhriteComment(post)">Commenter</div>
+                <div class="button" @click="showComment(post); showWhriteComment(post)">Commenter</div>
             </div> 
             <div v-if="post.whrite" class="comment__whrite">
                 <textarea v-model='commentContent' class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
-                <button @click="whriteComment()" class="comment__button"><fa icon="paper-plane" /></button>
+                <button @click="whriteComment(post.id_post,index)" class="comment__button" :class="{'comment__button--disabled' : !textFieldsComment}"><fa icon="paper-plane" /></button>
             </div> 
         </div>   
     <!--End-Publication-->         
@@ -105,24 +103,51 @@ export default {
         showWhriteComment(post) {
         post.whrite = !post.whrite;
         },
-        whriteComment: function () {
+        whriteComment: function (postId,index) {
+            console.log(index);
+            console.log(this.posts[index]);
             this.$store.dispatch('createComment', {
                 content: this.commentContent,
                 id_user: this.user.userId,
-                // id_post: this.posts.id_post, Comment ajouter l'id du post ? 
-            })
+                id_post: postId,
+            }).then (response => {console.log(response); this.posts[index].comments.unshift(response.data[0]) } )
         },
         createPost: function () {
             this.$store.dispatch('createPost', {
                 content: this.postContent,
-                id_user: this.user.userId,
-                // ajoutre la date , La prendre dans le header ? ( Attention : remettre la dat en non null) 
+                id_user: this.user.userId, 
             }).then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
-        }        
+        },
+        deletePost: function(id,index) {
+            console.log(index);
+            this.$store.dispatch('deletePost', id)
+            .then (response => {console.log(response);
+            this.posts.splice(index,1)});
+        },
+        deleteComment: function(id,index) {
+            console.log(index);
+            this.$store.dispatch('deleteComment', id)
+            .then (response => {console.log(response);
+            this.posts[index].comments.splice(index,1)});
+        },
     },
     computed : {
-        ...mapState(['user'])
-    }
+            ...mapState(['user']),
+        textFieldsPost: function (){
+            if (this.postContent != ""){
+                return true;
+            } else {
+                return false;
+            }
+        },
+        textFieldsComment: function (){
+            if (this.commentContent != ""){
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },
 }
 
 </script>
@@ -131,6 +156,7 @@ export default {
 
 .card {
     display: flex;
+    color:#091F43;
     .card__head {
     z-index: 1;
     position: absolute;    
@@ -220,13 +246,11 @@ export default {
                         text-align: center;
                         padding-top: 5px;
                         font-size: 0.8em;
-                        transition: .4s background-color;
-                        &:hover {
-                            cursor:pointer;
-                            border-radius: 8px;
-                            color: #091F43;
-                            background: white;
-                        }   
+                        transition: .4s background-color;   
+                    }
+                    .form__button--disabled {
+                        background:#ffe3e5;
+                        color: #091F43;
                     }
                     .form__addImg {
                         padding: 5px;
@@ -331,8 +355,6 @@ export default {
                     }
                 }
                 .deleteModify {
-                    display: flex;
-                    justify-content: flex-end;
                     p {
                         font-size: 0.8em;
                         padding-left: 8px;
@@ -389,11 +411,9 @@ export default {
                 box-shadow: 3px 3px 5px #b0b0b0;
                 resize : initial;
                 &:hover{
-                    border: none;
                     outline: none;
                 }
                 &:focus {
-                    border: none;
                     outline: none;
                 }
             } 
@@ -404,12 +424,16 @@ export default {
                 background: #e6e6e6;
                 box-shadow: 5px 5px 5px #b0b0b0;
                 border-radius: 0px 8px 8px 0px ;
-                &:hover {
-                    cursor:pointer;
-                    border-radius: 0px 8px 8px 0px ;;
-                    color: white;
-                    background: #091F43;
-                }
+                transition: .4s background-color;  
+            }
+            .comment__button--disabled {
+                color: #e6e6e6;
+                background: #e6e6e6;
+                width: 40px;
+                padding: 5px; 
+                border: none;
+                box-shadow: 5px 5px 5px #b0b0b0;
+                border-radius: 0px 8px 8px 0px ;
             }
         }
     }      

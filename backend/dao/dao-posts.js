@@ -1,3 +1,13 @@
+//Sommaire
+//Récupération de tout les posts
+//Récupération d'un seul post
+//Récupération de tout les comentaires avec l'id d'un post
+//Créer un nouveau post 
+//Créer un nouveau commentaire
+//Supprimer un post
+//Supprimer un commentaire
+
+
 const database = require("./db");
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql2");
@@ -27,7 +37,18 @@ const Posts = {
       } 
     )},
 
-//Récupération de tout les comentaires avec l'id d'un post    
+//Récupération d'un seul commentaire
+    findOneComment: function (id) {
+      return new Promise((resolve, reject) => {
+        database.query('SELECT *, DATE_FORMAT(date,"%y %b %d %k:%i") AS date FROM comments, users u WHERE comments.id_user = u.id_user AND id_comment = ' + id, 
+        function (err, comment, fields) {
+            if (err) reject(err);
+            else resolve(comment);    
+        });
+      } 
+    )},
+
+//Récupération de tout les commentaires avec l'id d'un post    
     findAllComment: function (id) {
         return new Promise((resolve, reject) => {
           database.query('SELECT *, DATE_FORMAT(date,"%y %b %d %k:%i") AS date FROM comments, users WHERE comments.id_user = users.id_user AND comments.id_post = ' + id, 
@@ -45,7 +66,6 @@ const Posts = {
           // Contenu : le message / la date / l'id de l'auteur / le nombre de like
           database.query(query,[postData.content, postData.id_user],(err, results, fields) => {
             if (err) throw err;
-            console.log(results);
             resolve(results);
           });
         });
@@ -55,7 +75,6 @@ const Posts = {
     createComment: function (commentData) {
       return new Promise((resolve, reject) => {
         const query = 'INSERT INTO `comments` (content, id_user, id_post) VALUES ( ?, ? ,?);';
-        
         database.query(query,[commentData.content, commentData.id_user, commentData.id_post],(err, results, fields) => {
           if (err) throw err;
           resolve(results);
@@ -63,21 +82,11 @@ const Posts = {
       });
   },
 
-    updatePost: function (postData) {
-        return new Promise((resolve, reject) => {
-          const query = 'UPDATE `posts` SET content = ? WHERE id_post = ? AND id_user = ?;';
-          // modification du contenu du post
-          database.query(query,[postData.content, postData.id_post , postData.id_user],(err, results, fields) => {
-            if (err) throw err;
-            resolve(results);
-          });
-        });
-    },
-
+//Supprimer un post
     deletePost: function (postData) {
+      console.log(postData);
         return new Promise((resolve, reject) => {
           const query = 'DELETE FROM `posts` WHERE id_post = ?';
-          
           database.query(query,[postData.id_post],(err, results, fields) => {
             if (err) throw err;
             resolve(results);
@@ -85,27 +94,17 @@ const Posts = {
         });
     },
 
-    updateComment: function (commentData) {
-        return new Promise((resolve, reject) => {
-          const query = 'UPDATE `comments` SET content = ? WHERE id_comment = ? AND id_user = ? AND id_post = ?;';
-          
-          database.query(query,[commentData.content, commentData.id_comment, commentData.id_user, commentData.id_post],(err, results, fields) => {
-            if (err) throw err;
-            resolve(results);
-          });
-        });
-    },
-
+//Supprimer un commentaire   
     deleteComment: function (commentData) {
+      console.log(commentData);
         return new Promise((resolve, reject) => {
-          const query = 'DELETE FROM `posts` WHERE id_post = ?';
-          
-          database.query(query,[commentData.id_post],(err, results, fields) => {
+          const query = 'DELETE FROM `comments` WHERE id_comment = ?';
+          database.query(query,[commentData.id_comment],(err, results, fields) => {
             if (err) throw err;
             resolve(results);
           });
         });
-    },
+    },  
 };
 
 module.exports = Posts;

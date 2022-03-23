@@ -51,6 +51,14 @@ export default createStore({
       commit;
       return instance.post('/posts/comments', commentInfos)
     },
+    deletePost:({commit}, id) => { 
+      commit;
+      return instance.delete('/posts/' + id)
+    },
+    deleteComment:({commit}, id) => { 
+      commit;
+      return instance.delete('/posts/comments' + id)
+    },
     login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
@@ -77,7 +85,7 @@ export default createStore({
     getPosts: () =>{
       return instance.get('/posts/'); 
     },
-    getComments: (_, id) =>{
+    getComments: (_,id) =>{
       return instance.get('/posts/'+ id +'/comments') 
     }, 
   },

@@ -118,6 +118,8 @@ body {
 
 .card {
     display: flex;
+    box-shadow: 2px 2px 5px #b0b0b0;
+    border-radius: 8px 8px 8px 8px;
     .card-right {
         position: relative;
         background-image: linear-gradient(160deg,#D1515A 0%,#091F43 70%, #091F43 100%);

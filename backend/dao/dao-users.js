@@ -46,42 +46,19 @@ const Users = {
     });
   },
 
-  // Modify 
-
-  update: function (userData) {
-    return new Promise((resolve, reject) => {
-      const query ='UPDATE `users` SET firstName = ?, name = ?, login = ?, pictureProfile = ? WHERE id_user = ?;';
-
-      database.query(
-        query,
-        [userData.Name, userData.firstName, userData.login, userData.pictureProfile, userData.id_user],
-        (err, results, fields) => {
-          if (err) {
-          reject({error : "Cette fonction est indisponible !"});
-          }
-          resolve({message : "Informations mises à jour !"});
-        }
-      );
-    });
-  },
-
   // Delete
 
-  delete: function (userData) {
+  delete: function (id_user){
     return new Promise((resolve, reject) => {
       const query = 'DELETE FROM `users` WHERE id_user = ?;';
-      database.query(query,
-        [userData.id_user],
-        (err, results, fields) => {
-          if (err) {
-            console.log("Erreur !!");
-            reject();
-          }
-          resolve(results);
-        }
-      );
-    });
-  },
+      console.log(userId);
+      database.query(query,id_user,
+      (err, results, fields) => {
+          if (err) reject(err);
+          else resolve(results);
+      });
+    }
+  )},
 
   // Show my profile
 
