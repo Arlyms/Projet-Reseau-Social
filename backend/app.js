@@ -5,6 +5,7 @@ const helmet = require('helmet');
 
 const routerUsers = require('./routes/user.routes');
 const routerPosts = require('./routes/post.routes');
+//const routerAdmin = require('./routes/admin.routes');
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use(helmet());
 app.use ('/images', express.static(path.join(__dirname,'images'))),
 app.use('/api/auth', routerUsers);
 app.use('/api/posts', routerPosts);
+//app.use('/api/admin', routerAdmin);
 
 module.exports = app;

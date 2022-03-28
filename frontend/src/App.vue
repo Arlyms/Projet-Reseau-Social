@@ -32,5 +32,6 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding:32px;
+  padding-top: 0px;
 };
 </style>

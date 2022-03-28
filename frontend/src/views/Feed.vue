@@ -1,9 +1,10 @@
 <template>
+<!--Feed--> 
 <div class="card">
-    <div class="card__head">
-        <img src="../assets/icon-left-font-monochrome-white.png" alt="logo groupomania"/>
-    </div> 
-<!--Feed-->    
+    <!--Navigation-->
+    <Navigation/>    
+    <router-view></router-view>
+    <!--End-Navigation--> 
     <div class="card__feed">
         <div class="card__form">
             <div class="form__author">
@@ -11,10 +12,9 @@
             </div>
             <div class="form__content">
                 <textarea v-model="postContent" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
+                <!--<input v-model="postContent" type="file" id="file-upload" name="file" accept=".jpg, .jpeg, png"/>
+                    <fa icon="image" /   >--> 
                 <div class="from__send">
-                    <div class="form__addImg">
-                        <fa icon="image" />
-                    </div>
                     <div @click="createPost()"  class="form__button" :class="{'form__button--disabled' : !textFieldsPost}"> Poster </div>     
                 </div>    
             </div>
@@ -28,8 +28,8 @@
                 <div class="post__content" @click="showComment(post)">
                     <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
-                    <div class="deleteModify"> <!-- que pour l'utilisateur -->
-                        <button @click="deletePost(post.id_post,index)">Supprimer</button>
+                    <div class="delete"> <!-- que pour l'utilisateur -->
+                        <p @click="deletePost(post.id_post,index)">Supprimer</p>
                     </div>
                 </div>
                 <p class="date--post">{{ post.date }}</p>
@@ -42,8 +42,8 @@
                     <div class="comment__content">
                         <h4>{{ comment.firstName }} {{ comment.name }}</h4>
                         <p>{{ comment.content }}</p>
-                        <div class="deleteModify"> <!-- que pour l'utilisateur -->
-                            <p @click="deletePost(post.id_comment,index)">Supprimer</p>
+                        <div class="deleteCom"> <!-- que pour l'utilisateur -->
+                            <p @click="deleteComment(comment.id_comment,index)">Supprimer</p>
                         </div>
                     </div> 
                     <div class="date--com">{{ comment.date }}</div>
@@ -59,11 +59,7 @@
         </div>   
     <!--End-Publication-->         
     </div>
-<!--End-Feed-->
-<!--Navigation-->
-<Navigation/>    
-<router-view></router-view>
-<!--End-Navigation-->    
+<!--End-Feed-->   
 </div>      
 </template>
 
@@ -104,8 +100,6 @@ export default {
         post.whrite = !post.whrite;
         },
         whriteComment: function (postId,index) {
-            console.log(index);
-            console.log(this.posts[index]);
             this.$store.dispatch('createComment', {
                 content: this.commentContent,
                 id_user: this.user.userId,
@@ -119,14 +113,12 @@ export default {
             }).then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
         },
         deletePost: function(id,index) {
-            console.log(index);
             this.$store.dispatch('deletePost', id)
             .then (response => {console.log(response);
             this.posts.splice(index,1)});
         },
-        deleteComment: function(id,index) {
-            console.log(index);
-            this.$store.dispatch('deleteComment', id)
+        deleteComment: function(idComment,index) {
+            this.$store.dispatch('deleteComment', idComment)
             .then (response => {console.log(response);
             this.posts[index].comments.splice(index,1)});
         },
@@ -155,24 +147,7 @@ export default {
 <style lang="scss" scoped>
 
 .card {
-    display: flex;
     color:#091F43;
-    .card__head {
-    z-index: 1;
-    position: absolute;    
-    max-width: 100%;
-    width: 600px;
-    height : 10px;
-    background-image: linear-gradient(160deg,#D1515A 0%,#091F43 70%, #091F43 100%);
-    border-radius: 8px 8px 0px 0px;
-    padding:25px;
-        img {
-            position: absolute;  
-            width:150px;
-            left: 15px;
-            top: 15px;
-        }
-    }
     .card__feed {
     display: flex;
     flex-direction: column;    
@@ -186,11 +161,12 @@ export default {
             max-width: 100%;
             display:flex;
             justify-content: space-between;
-            padding-top:60px; 
+            padding-top: 60px; 
             border-bottom:  1px  solid #b0b0b0;
             .form__author {
                 border: none;
-                width: 50px;
+                min-width: 50px;
+                max-width: 50px;
                 height: 50px;
                 border-radius: 16px;
                 box-shadow: 2px 2px 5px #b0b0b0;
@@ -246,11 +222,13 @@ export default {
                         text-align: center;
                         padding-top: 5px;
                         font-size: 0.8em;
-                        transition: .4s background-color;   
+                        transition: .4s background-color;  
+                        cursor: pointer;
                     }
                     .form__button--disabled {
                         background:#ffe3e5;
                         color: #091F43;
+                        cursor: not-allowed;
                     }
                     .form__addImg {
                         padding: 5px;
@@ -297,13 +275,20 @@ export default {
                     margin-bottom:10px;
                     font-size: .8em;
                 }
-                .deleteModify {
+                .delete {
                     display: flex;
                     justify-content: flex-end;
                     p {
                         font-size: 0.6em;
                         padding-left: 8px;
                         margin-bottom: 0px;
+                        transition: transform .2s;
+                        &:hover {
+                            transform: scale(1.05);
+                            color: rgb(202, 0, 0);
+                            font-weight: 600;
+                            cursor: pointer;
+                        }
                     }
                 }
             }
@@ -354,11 +339,19 @@ export default {
                         width: 70%;
                     }
                 }
-                .deleteModify {
+                .deleteCom {
                     p {
-                        font-size: 0.8em;
+                        font-size: 0.6em;
                         padding-left: 8px;
-                    }
+                        margin-bottom: 0px;
+                        transition: transform .2s;
+                        &:hover {
+                            transform: scale(1.05);
+                            color: rgb(202, 0, 0);
+                            font-weight: 600;
+                            cursor: pointer;
+                        }
+                    }    
                 }
                 .date--com {
                     font-size: 0.2em;
@@ -425,6 +418,7 @@ export default {
                 box-shadow: 5px 5px 5px #b0b0b0;
                 border-radius: 0px 8px 8px 0px ;
                 transition: .4s background-color;  
+                cursor: pointer;
             }
             .comment__button--disabled {
                 color: #e6e6e6;
@@ -434,6 +428,7 @@ export default {
                 border: none;
                 box-shadow: 5px 5px 5px #b0b0b0;
                 border-radius: 0px 8px 8px 0px ;
+                cursor: not-allowed;
             }
         }
     }      

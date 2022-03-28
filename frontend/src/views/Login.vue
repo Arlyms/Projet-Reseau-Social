@@ -117,6 +117,7 @@ body {
 }
 
 .card {
+    margin-top: 60px;
     display: flex;
     box-shadow: 2px 2px 5px #b0b0b0;
     border-radius: 8px 8px 8px 8px;

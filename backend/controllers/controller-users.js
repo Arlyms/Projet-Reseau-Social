@@ -34,7 +34,7 @@ const ControllerUsers = {
     }
   },
   deleteUser: function (req, res, next) {
-    Users.deleteUser({id_user: req.auth.userId})
+    Users.delete({id_user: req.auth.userId})
       .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
       .catch(error => res.status(400).json({ error }));
   },

@@ -1,31 +1,37 @@
 <template>
 <div class="card__nav">   
-    <div class="nav__button" @click="showUser">
-        <fa icon="user" />
-    </div>
-    <div v-if="display" class="nav__user">
-        <div class="user__pp">
-            <img src="../assets/harry.jpg" alt="profile Picture"/> <!-- {{ user.pictureProfile }} -->
+    <div class="nav__head">
+        <a href="#" class="logo">
+            <img src="../assets/icon-left-font-monochrome-white.png" alt="logo groupomania"/>
+        </a>
+        <div class="nav__link">
+            <div class="nav__button" @click="showUser" title='Profil'>
+                <fa icon="user" />
+            </div>
+            <div v-if="display" class="nav__user">
+                <div class="user__pp">
+                </div>
+                <div class="user__name" >
+                <p>{{ user.firstName }}</p>
+                <p>{{ user.name }}</p>
+                </div>
+                <div class="user__email">
+                    <span>{{ user.email }}</span>
+                </div>
+                <div @click="deleteUser(user.userId)" class="user__delete">
+                    <p>Supprimer le compte</p>
+                </div> 
+            <!--<div v-if="validate" class="card__validation">
+                </div> 
+            <div class="nav__button">
+                <fa icon="moon" />
+            </div>-->
+            </div>
+            <div @click="logout()" class="nav__button">
+                <fa icon="door-open" />
+            </div>
         </div>
-        <div class="user__name" >
-        <p>{{ user.firstName }}</p>
-        <p>{{ user.name }}</p>
-        </div>
-        <div class="user__email">
-            <span>{{ user.email }}</span>
-        </div>
-        <div class="user__delete">
-            <p>Supprimer le compte</p>
-        </div> 
-    <!--<div v-if="validate" class="card__validation">
-        </div> 
-    <div class="nav__button">
-        <fa icon="moon" />
-    </div>-->
-    </div>
-    <div @click="logout()" class="nav__button">
-        <fa icon="door-open" />
-    </div>
+    </div>         
 </div>
 </template>
 
@@ -38,6 +44,7 @@ export default {
         mode: 'normal',
         display: false,
         validate: false,
+        mobile: null,
     }
     },
     mounted: function (){
@@ -50,9 +57,10 @@ export default {
         showUser() {
         this.display = !this.display; // remplacer user.display à terme ? 
         },
-        /*showValidate() {
-        this.validate = !this.validate; 
-        },*/
+        deleteUser: function (id_user){
+            this.$store.dispatch('deleteUser', id_user),
+            this.$router.push('/login');
+        }
     },
     computed : {
         ...mapState(['user'])
@@ -64,96 +72,107 @@ export default {
 <style scoped lang="scss">
 
 .card__nav {
-    position: relative;
+    position: fixed;
     display: flex;
-    flex-direction: column;
-    .nav__user {
-        z-index: 3;
-        position: absolute;
-        right: 82px;
-        background-image: linear-gradient(white 0%, #e2e2e2 100%);
-        border-radius: 7px;
-        min-width: 200px;
-        min-height: 250px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        .user__pp {
-            border: none;
-            width: 80px;
-            height: 80px;
-            border-radius: 16px;
-            box-shadow: 2px 2px 5px #b0b0b0;
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-radius: 16px;
-            }
-        }
-        .user__name {
-            display: flex;
-            p {
-                padding: 3px;
-            }
-        }
-        .user__email {
-            font-size: 0.6em;
-        }
-        .user__delete {
-            border: none;
-            border-radius: 8px;
-            height:30px;
-            width: 100%;
-            color: white;
-            background: red;
-            text-align: center;
-            padding-top: 5px;
-            margin-top: 50px;
-            font-size: 0.8em;
-            transition: .4s background-color;
-            &:hover {
-                cursor:pointer;
-                border-radius: 8px;
-                color: #091F43;
-                background: red;
-            }
-        }
-        .card__validation {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            z-index: 4;
-            height: 150px;
-            width: 300px;
-            background-color: white;
-            border-radius: 8px;
+    z-index: 2;
+    .nav__head {
+    position: relative;  
+    max-width: 100%;
+    width: 600px;
+    height : 10px;
+    background-image: linear-gradient(160deg,#D1515A 0%,#091F43 70%, #091F43 100%);
+    padding:25px;
+        img {
+            position: absolute;  
+            width:150px;
+            left: 15px;
+            top: 15px;
         }
     }
-    .nav__button {
-        position: relative;
-        background-color: #091F43;
-        color: white;
-        border-radius: 16px;
-        border: none;
-        width: 50px;
-        height: 50px;
-        padding: 16px;
-        margin: 16px;
-        margin-top: 0;
-        transition: .4s background-color;
-        &:hover {
-            cursor:pointer;
-            background: white;
-        }
-        svg {
+    .nav__link {
         position: absolute;
-        margin: auto;
-        color: white;
-        align-items: center;
-        } 
+        display: flex;
+        right: 10px;
+        top: 10px;
+        .nav__button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            margin: 4px;
+            margin-left: 16px;
+            transition: .4s background-color;
+            &:hover{
+                cursor: pointer;
+            }
+        }    
+        .nav__user {
+            z-index: 3;
+            position: absolute;
+            right: -10px;
+            top: 40px;
+            background-image: linear-gradient(rgb(255, 255, 255) 0%, #e9e9e9 100%);
+            border-radius: 0px 0px 8px 8px ;
+            min-width: 200px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            .user__pp {
+                border: none;
+                width: 80px;
+                height: 80px;
+                border-radius: 16px;
+                box-shadow: 2px 2px 5px #b0b0b0;
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 16px;
+                }
+            }
+            .user__name {
+                display: flex;
+                p {
+                    padding: 3px;
+                }
+            }
+            .user__email {
+                font-size: 0.6em;
+            }
+            .user__delete {
+                border: none;
+                border-radius: 8px;
+                height:30px;
+                width: 100%;
+                color: white;
+                background: red;
+                text-align: center;
+                padding-top: 5px;
+                margin-top: 50px;
+                font-size: 0.8em;
+                transition: .4s background-color;
+                &:hover {
+                    cursor:pointer;
+                    border-radius: 8px;
+                    color: #091F43;
+                    background: red;
+                }
+            }
+            .card__validation {
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                z-index: 4;
+                height: 150px;
+                width: 300px;
+                background-color: white;
+                border-radius: 8px;
+            }
+        }
     }          
 }
 </style>

@@ -55,9 +55,13 @@ export default createStore({
       commit;
       return instance.delete('/posts/' + id)
     },
-    deleteComment:({commit}, id) => { 
+    deleteComment:({commit}, idComment) => { 
       commit;
-      return instance.delete('/posts/comments' + id)
+      return instance.delete('/posts/comments/' + idComment)
+    },
+    deleteUser:({commit}, id_user) => { 
+      commit;
+      return instance.delete('/auth/' + id_user)
     },
     login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');

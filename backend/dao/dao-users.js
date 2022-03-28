@@ -48,11 +48,11 @@ const Users = {
 
   // Delete
 
-  delete: function (id_user){
+  delete: function (userId){
+    console.log(userId);
     return new Promise((resolve, reject) => {
       const query = 'DELETE FROM `users` WHERE id_user = ?;';
-      console.log(userId);
-      database.query(query,id_user,
+      database.query(query,userId.id_user,
       (err, results, fields) => {
           if (err) reject(err);
           else resolve(results);

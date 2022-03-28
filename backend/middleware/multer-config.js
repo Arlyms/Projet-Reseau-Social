@@ -18,4 +18,4 @@ const storage = multer.diskStorage({
   }
 });
 
-module.exports = multer({ storage }).single('pictureProfile');
+module.exports = multer({ storage }).single('imageUrl');
