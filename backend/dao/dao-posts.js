@@ -60,11 +60,11 @@ const Posts = {
     )},
 
 //Créer un nouveau post    
-    createPost: function (postData) {
+    createPost: function (postData, imageUrl) {
         return new Promise((resolve, reject) => {
-          const query = 'INSERT INTO `posts` (content, id_user) VALUES (?,?)';
+          const query = 'INSERT INTO `posts` (content, id_user, imageUrl) VALUES (?,?,?)';
           // Contenu : le message / la date / l'id de l'auteur / le nombre de like
-          database.query(query,[postData.content, postData.id_user],(err, results, fields) => {
+          database.query(query,[postData.content, postData.id_user, imageUrl.imageUrl],(err, results, fields) => {
             if (err) throw err;
             resolve(results);
           });

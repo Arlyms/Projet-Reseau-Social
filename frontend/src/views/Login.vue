@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-left">
-        <h1 class="card__title" v-if = "mode == 'login'">Connexion</h1> <!-- Mode Connexion -->
+        <h1 class="card__title" v-if = "mode == 'login' ">Connexion</h1> <!-- Mode Connexion -->
         <h1 class="card__title" v-else>Inscription</h1> <!-- Mode Inscription -->
         <div class="card__form" v-if = "mode == 'create'"> <!-- Mode Inscription -->
             <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/>

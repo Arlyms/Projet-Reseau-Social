@@ -29,9 +29,7 @@ const ControllerPosts = {
   addPost: async function (req, res, next) {
     console.log(req.body);
     const post =  await Posts.createPost(req.body, {
-    /*  imageUrl: `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`, */
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
     });
     const id = post.insertId
     console.log(id);

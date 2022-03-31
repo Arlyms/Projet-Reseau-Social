@@ -12,11 +12,18 @@
             </div>
             <div class="form__content">
                 <textarea v-model="postContent" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
-                <!--<input v-model="postContent" type="file" id="file-upload" name="file" accept=".jpg, .jpeg, png"/>
-                    <fa icon="image" /   >--> 
-                <div class="from__send">
-                    <div @click="createPost()"  class="form__button" :class="{'form__button--disabled' : !textFieldsPost}"> Poster </div>     
-                </div>    
+                <div class="form__end">
+                    <div class="form__addImg">
+                        <input @change="postFile" type="file" id="file" accept=".jpg, .jpeg, png"/>
+                        <label for="file"><fa icon="image" /></label>
+                        <div v-if="filePreview" class="filePreview">
+                            <img :src="filePreview" alt="file Prewiew"/>
+                        </div>
+                    </div>           
+                    <div class="form__send">
+                        <div @click="createPost()"  class="form__button" :class="{'form__button--disabled' : !textFieldsPost}"> Poster </div>     
+                    </div>
+                </div>        
             </div>
         </div>
     <!--Publication-->   
@@ -28,6 +35,7 @@
                 <div class="post__content" @click="showComment(post)">
                     <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
+                    <img :src="post.imageUrl"/>
                     <div class="delete"> <!-- que pour l'utilisateur -->
                         <p @click="deletePost(post.id_post,index)">Supprimer</p>
                     </div>
@@ -35,7 +43,7 @@
                 <p class="date--post">{{ post.date }}</p>
             </div>  
             <div v-if="post.showw"  class="post__comment"> <!--1-->
-                <div class="comment" v-for="comment in post.comments" :key="comment.id_comment">
+                <div class="comment" v-for="(comment,indexC) in post.comments" :key="comment.id_comment">
                     <div class="comment__pp">
                         <img src="../assets/draco.jpg" alt="profile Picture"/>
                     </div>
@@ -43,7 +51,7 @@
                         <h4>{{ comment.firstName }} {{ comment.name }}</h4>
                         <p>{{ comment.content }}</p>
                         <div class="deleteCom"> <!-- que pour l'utilisateur -->
-                            <p @click="deleteComment(comment.id_comment,index)">Supprimer</p>
+                            <p @click="deleteComment(comment.id_comment,indexC)">Supprimer</p>
                         </div>
                     </div> 
                     <div class="date--com">{{ comment.date }}</div>
@@ -75,6 +83,8 @@ export default {
             posts: [],
             postContent: '',
             commentContent:'',
+            file:'',
+            filePreview:'',
         }
     },
     components: {
@@ -104,13 +114,16 @@ export default {
                 content: this.commentContent,
                 id_user: this.user.userId,
                 id_post: postId,
-            }).then (response => {console.log(response); this.posts[index].comments.unshift(response.data[0]) } )
+            }).then (response => {console.log(response); this.posts[index].comments.shift(response.data[0]) } )
         },
         createPost: function () {
-            this.$store.dispatch('createPost', {
-                content: this.postContent,
-                id_user: this.user.userId, 
-            }).then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
+            let formData = new FormData();
+            formData.append('imageUrl', this.file);
+            formData.append('id_user', this.user.userId);
+            formData.append('content', this.postContent);
+            console.log(formData);
+            this.$store.dispatch('createPost', formData)
+            .then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
         },
         deletePost: function(id,index) {
             this.$store.dispatch('deletePost', id)
@@ -122,6 +135,11 @@ export default {
             .then (response => {console.log(response);
             this.posts[index].comments.splice(index,1)});
         },
+        postFile: function(event) {
+            this.file = event.target.files[0];
+            console.log(this.file);
+            this.filePreview = URL.createObjectURL(this.file);
+        }    
     },
     computed : {
             ...mapState(['user']),
@@ -161,7 +179,7 @@ export default {
             max-width: 100%;
             display:flex;
             justify-content: space-between;
-            padding-top: 60px; 
+            padding-top: 70px; 
             border-bottom:  1px  solid #b0b0b0;
             .form__author {
                 border: none;
@@ -208,32 +226,52 @@ export default {
                         outline: none;
                     }
                 }
-                .from__send {
-                    display: flex;
-                    justify-content: flex-end;
-                    .form__button {
-                        border: none;
-                        border-radius: 8px;
-                        height:30px;
-                        width: 30%;
-                        color: white;
-                        background: #091F43;
-                        margin-left: 20px;
-                        text-align: center;
-                        padding-top: 5px;
-                        font-size: 0.8em;
-                        transition: .4s background-color;  
-                        cursor: pointer;
-                    }
-                    .form__button--disabled {
-                        background:#ffe3e5;
-                        color: #091F43;
-                        cursor: not-allowed;
-                    }
+                .form__end {
+                display: flex;
+                justify-content: flex-end;    
                     .form__addImg {
-                        padding: 5px;
+                    padding-top: 4px;
+                        input[type="file"]{
+                            display: none;
+                        }
+                        label{
+                            cursor: pointer;
+                        }
+                        .filePreview {
+                            max-width: 300px;
+                            border-radius: 8px;
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                border-radius: 8px;
+                            }
+                        }
+                    }    
+                    .form__send {
+                        display: flex;
+                        justify-content: flex-end;
+                        .form__button {
+                            border: none;
+                            border-radius: 8px;
+                            height:30px;
+                            width: 100px;
+                            color: white;
+                            background: #091F43;
+                            margin-left: 20px;
+                            text-align: center;
+                            padding-top: 5px;
+                            font-size: 0.8em;
+                            transition: .4s background-color;  
+                            cursor: pointer;
+                        }
+                        .form__button--disabled {
+                            background:#ffe3e5;
+                            color: #091F43;
+                            cursor: not-allowed;
+                        }
                     }
-                }    
+                }        
             }
         }
     .card__post{      
@@ -274,6 +312,9 @@ export default {
                     margin-top:10px;
                     margin-bottom:10px;
                     font-size: .8em;
+                }
+                img {
+                    max-width: 300px ;
                 }
                 .delete {
                     display: flex;

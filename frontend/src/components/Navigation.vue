@@ -2,13 +2,14 @@
 <div class="card__nav">   
     <div class="nav__head">
         <a href="#" class="logo">
-            <img src="../assets/icon-left-font-monochrome-white.png" alt="logo groupomania"/>
+            <img v-if ="!mobile"  src=".../assets/icon-left-font-monochromewhite.png" alt="logo groupomania"/>
+            <img v-else src=".../assets/icon-monochromewhite.png" alt="logo groupomania"/>
         </a>
         <div class="nav__link">
             <div class="nav__button" @click="showUser" title='Profil'>
                 <fa icon="user" />
             </div>
-            <div v-if="display" class="nav__user">
+            <div v-if="display" class="nav__user"><object data="" type=""></object>
                 <div class="user__pp">
                 </div>
                 <div class="user__name" >
@@ -21,11 +22,6 @@
                 <div @click="deleteUser(user.userId)" class="user__delete">
                     <p>Supprimer le compte</p>
                 </div> 
-            <!--<div v-if="validate" class="card__validation">
-                </div> 
-            <div class="nav__button">
-                <fa icon="moon" />
-            </div>-->
             </div>
             <div @click="logout()" class="nav__button">
                 <fa icon="door-open" />
@@ -41,16 +37,17 @@ export default {
     name: 'Navigation',
     data: function(){
     return{
-        mode: 'normal',
         display: false,
-        validate: false,
-        mobile: null,
+        mobile: true,
     }
     },
     mounted: function (){
         console.log(this.$store.state.user);
     },
     methods: {
+        showMobileNav(){
+            this.mobile = window.innerWidth <= 990;
+        },
         logout: function () {
         this.$router.push('/login');
         },
@@ -61,6 +58,9 @@ export default {
             this.$store.dispatch('deleteUser', id_user),
             this.$router.push('/login');
         }
+    },
+    created(){
+        this.showMobileNav();
     },
     computed : {
         ...mapState(['user'])
@@ -82,6 +82,7 @@ export default {
     height : 10px;
     background-image: linear-gradient(160deg,#D1515A 0%,#091F43 70%, #091F43 100%);
     padding:25px;
+    opacity: 0.9;
         img {
             position: absolute;  
             width:150px;

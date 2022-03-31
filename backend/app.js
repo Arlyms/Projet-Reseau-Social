@@ -2,12 +2,12 @@ const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
 
-
 const routerUsers = require('./routes/user.routes');
 const routerPosts = require('./routes/post.routes');
 //const routerAdmin = require('./routes/admin.routes');
 
 const app = express();
+
 
 app.use((req, res, next) => {  
     res.setHeader('Access-Control-Allow-Origin','*'); 

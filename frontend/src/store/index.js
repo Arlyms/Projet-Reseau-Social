@@ -45,7 +45,8 @@ export default createStore({
     },
     createPost: ({commit}, postInfos) => { 
         commit;
-        return instance.post('/posts/', postInfos)
+        return instance.post('/posts/', postInfos
+        )
     },
     createComment: ({commit}, commentInfos) => { 
       commit;
