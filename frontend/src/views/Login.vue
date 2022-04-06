@@ -17,7 +17,7 @@
             ⚠ Vos identifiants de connexion ne correspondent à aucun compte sur notre système. <!-- Mode Connexion -->
         </div>
             <div class="card__form wrong" v-if="mode == 'create' && status == 'error_create'">
-            ⚠ Email déjà utilisé. <!-- Mode Connexion -->
+            ⚠ Doit contenir au moins 6 caractères, une majuscule et un chiffre. <!-- Mode Connexion -->
         </div>
         <div class="card__form">
             <button @click="login()" class="card__button" :class="{'card__button--disabled' : !textFields}" v-if = "mode == 'login'"> <!-- Mode Connexion -->

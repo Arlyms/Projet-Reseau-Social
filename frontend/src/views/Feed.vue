@@ -22,6 +22,7 @@
                         <label for="file"><fa icon="image" /></label>
                         <div v-if="filePreview" class="filePreview">
                             <img :src="filePreview" alt="file Prewiew"/>
+                            <div @click="deleteSelection()" class="cross"><fa icon="trash"/></div>
                         </div>
                     </div>           
                     <div class="form__send">
@@ -111,6 +112,9 @@ export default {
     methods: {
         showMobileNav(){
             this.mobile = window.innerWidth <= 740;
+        },
+        deleteSelection(){
+            this.filePreview = ''; this.file='';
         },
         showComment(post) {
             this.$store.dispatch('getComments', post.id_post)
@@ -266,6 +270,7 @@ export default {
                             cursor: pointer;
                         }
                         .filePreview {
+                            position: relative;
                             max-width: 300px;
                             border-radius: 8px;
                             img {
@@ -273,6 +278,15 @@ export default {
                                 height: 100%;
                                 object-fit: cover;
                                 border-radius: 8px;
+                            }
+                            .cross {
+                                position: absolute;
+                                cursor: pointer;
+                                top: 10px;
+                                right: 15px;
+                                &:hover {
+                                    color: red;
+                                }
                             }
                         }
                     }    
