@@ -34,4 +34,14 @@ body {
   padding:32px;
   padding-top: 0px;
 };
+
+@media only screen and (max-width: 740px) {
+  #app {
+  width: 100%;
+
+  }
+  body {
+    padding: 0px;
+  }
+}
 </style>

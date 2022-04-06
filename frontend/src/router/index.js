@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Feed from '@/views/Feed.vue';
 import Login from '@/views/Login.vue';
-import Notfound from '@/views/Notfound.vue';
-
 
 const routes = [
   {
@@ -10,7 +8,7 @@ const routes = [
     path: '/feed',
     component: Feed,
     meta: {
-      title: 'Feed'
+      title: 'Groupomania | Accueil'
     }
   }, { 
     name: 'Login',
@@ -18,13 +16,6 @@ const routes = [
     component: Login,
     meta: {
       title: 'Groupomania'
-    }
-  }, {
-    name: 'NotFound',
-    path: '/:pathMatch(.*)',
-    component: Notfound,
-    meta: {
-      title: '404 not Found'
     }
   }
 ]

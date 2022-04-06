@@ -1,9 +1,10 @@
 const mysql = require('mysql2');
+
 console.log('Connexion à la base de données...');
 const database = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password:'aTY8>Vu4pGz85T~m)&2!',
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.CONNEXION_STRING,
     database: 'groupomania'
 });
 

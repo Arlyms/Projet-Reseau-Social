@@ -25,45 +25,11 @@ export default createStore({
     userDatas: function (state, userDatas){
       state.userDatas = userDatas;
     },
+    updateUser: function (state, pictureProfile){
+      state.user.pictureProfile = pictureProfile;
+    },
   },
   actions: {
-    createAccount: ({commit}, userDatas) => {
-      commit('setStatus', 'loading');
-      return new Promise((resolve, reject) => {
-        instance.post('/auth/signup', userDatas) 
-        .then(function (response) {
-          console.log(userDatas);
-          commit('setStatus', 'created');
-          resolve(response);
-        })
-        .catch(function (error) {
-          console.log();
-          commit('setStatus', 'error_create');
-          reject(error);
-        })
-      });  
-    },
-    createPost: ({commit}, postInfos) => { 
-        commit;
-        return instance.post('/posts/', postInfos
-        )
-    },
-    createComment: ({commit}, commentInfos) => { 
-      commit;
-      return instance.post('/posts/comments', commentInfos)
-    },
-    deletePost:({commit}, id) => { 
-      commit;
-      return instance.delete('/posts/' + id)
-    },
-    deleteComment:({commit}, idComment) => { 
-      commit;
-      return instance.delete('/posts/comments/' + idComment)
-    },
-    deleteUser:({commit}, id_user) => { 
-      commit;
-      return instance.delete('/auth/' + id_user)
-    },
     login: ({commit}, userDatas) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
@@ -78,6 +44,45 @@ export default createStore({
           reject(error);
         })
       });  
+    },
+    createAccount: ({commit}, userDatas) => {
+      commit('setStatus', 'loading');
+      return new Promise((resolve, reject) => {
+        instance.post('/auth/signup', userDatas) 
+        .then(function (response) {
+          commit('setStatus', 'created');
+          resolve(response);
+        })
+        .catch(function (error) {
+          commit('setStatus', 'error_create');
+          reject(error);
+        })
+      });  
+    },
+    createPost: ({commit}, postInfos) => { 
+        commit;
+        return instance.post('/posts/', postInfos
+        )
+    },
+    createComment: ({commit}, commentInfos) => { 
+      commit;
+      return instance.post('/posts/comments', commentInfos)
+    },
+    addPp: ({commit}, ppInfos) => { 
+      commit;
+      return instance.post('/auth/', ppInfos)
+    },
+    deletePost:({commit}, id) => { 
+      commit;
+      return instance.delete('/posts/' + id)
+    },
+    deleteComment:({commit}, idComment) => { 
+      commit;
+      return instance.delete('/posts/comments/' + idComment)
+    },
+    deleteUser:({commit}, id_user) => { 
+      commit;
+      return instance.delete('/auth/' + id_user)
     },
     getUserDatas: ({commit}) => {
       instance.get('/auth/') 

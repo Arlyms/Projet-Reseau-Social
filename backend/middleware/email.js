@@ -1,4 +1,5 @@
-// Authentification du token 
+// Regex Email
+
 module.exports = (req, res, next) => {
     const email = req.body.login;
 

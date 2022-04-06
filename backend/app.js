@@ -1,13 +1,11 @@
 const express = require('express');
 const path = require('path');
-const helmet = require('helmet');
-
+const cors = require('cors');
 const routerUsers = require('./routes/user.routes');
 const routerPosts = require('./routes/post.routes');
-//const routerAdmin = require('./routes/admin.routes');
 
 const app = express();
-
+app.use(cors());
 
 app.use((req, res, next) => {  
     res.setHeader('Access-Control-Allow-Origin','*'); 
@@ -21,12 +19,8 @@ app.use(express.urlencoded({
     extended: true
 }));
 
-app.use(helmet());
-
-
 app.use ('/images', express.static(path.join(__dirname,'images'))),
 app.use('/api/auth', routerUsers);
 app.use('/api/posts', routerPosts);
-//app.use('/api/admin', routerAdmin);
 
 module.exports = app;

@@ -1,6 +1,6 @@
 <template>
 <!--Feed--> 
-<div class="card">
+<div class="card">  
     <!--Navigation-->
     <Navigation/>    
     <router-view></router-view>
@@ -8,7 +8,11 @@
     <div class="card__feed">
         <div class="card__form">
             <div class="form__author">
-                <img src="../assets/harry.jpg" alt="profile Picture"/>
+                <div v-if="user.admin" class="crown">
+                    <fa icon="star" />
+                </div>
+                <img v-if="user.pictureProfile" :src="user.pictureProfile" alt="profile Picture"/>
+                <img v-else src="../assets/default-user.png" alt="pp par default"/>
             </div>
             <div class="form__content">
                 <textarea v-model="postContent" class="form__input" type="text"  :placeholder=" 'Quoi de neuf, ' + user.firstName + ' ?' " row="1" maxlength="250"></textarea>
@@ -28,41 +32,46 @@
         </div>
     <!--Publication-->   
         <div v-for="(post,index) in posts" :key="post.id_post" class="card__post">
-            <div class="post"> <!-- code en dur !! A changer-->
+            <div class="post"> 
                 <div class="post__author">
-                    <img src="../assets/albus.jpg" alt="profile Picture"/>
+                    <div v-if="post.admin" class="crown">
+                        <fa icon="star" />
+                    </div>
+                    <img v-if="post.pictureProfile" :src="post.pictureProfile" alt="profile Picture"/>
+                    <img v-else src="../assets/default-user.png" alt="pp par default"/>
                 </div>
                 <div class="post__content" @click="showComment(post)">
                     <h3>{{ post.firstName }} {{ post.name }}</h3>
                     <p>{{ post.content }}</p>
-                    <img :src="post.imageUrl"/>
-                    <div class="delete"> <!-- que pour l'utilisateur -->
+                        <img :src="post.imageUrl"/>
+                    <div v-if="user.userId == post.id_user || user.admin" class="delete"> 
                         <p @click="deletePost(post.id_post,index)">Supprimer</p>
                     </div>
                 </div>
-                <p class="date--post">{{ post.date }}</p>
+                <p v-if="!mobile" class="date--post">{{ post.date }}</p>
             </div>  
-            <div v-if="post.showw"  class="post__comment"> <!--1-->
+            <div v-if="post.showw"  class="post__comment"> 
                 <div class="comment" v-for="(comment,indexC) in post.comments" :key="comment.id_comment">
                     <div class="comment__pp">
-                        <img src="../assets/draco.jpg" alt="profile Picture"/>
+                        <img v-if="comment.pictureProfile" :src="comment.pictureProfile" alt="profile Picture"/>
+                        <img v-else src="../assets/default-user.png" alt="pp par default"/>
                     </div>
                     <div class="comment__content">
                         <h4>{{ comment.firstName }} {{ comment.name }}</h4>
                         <p>{{ comment.content }}</p>
-                        <div class="deleteCom"> <!-- que pour l'utilisateur -->
-                            <p @click="deleteComment(comment.id_comment,indexC)">Supprimer</p>
+                        <div v-if="user.userId == comment.id_user || user.admin" class="deleteCom"> 
+                            <p @click="deleteComment(comment.id_comment,indexC,post)">Supprimer</p>
                         </div>
                     </div> 
-                    <div class="date--com">{{ comment.date }}</div>
+                    <div v-if="!mobile" class="date--com">{{ comment.date }}</div>
                 </div>    
             </div>
             <div class="post__button">
-                <div class="button" @click="showComment(post); showWhriteComment(post)">Commenter</div>
+                <div class="button" @click="showComment(post)">Commenter</div>
             </div> 
             <div v-if="post.whrite" class="comment__whrite">
-                <textarea v-model='commentContent' class="comment__whriteContent" type="text" cols="50" rows="1" maxlength="100"></textarea>
-                <button @click="whriteComment(post.id_post,index)" class="comment__button" :class="{'comment__button--disabled' : !textFieldsComment}"><fa icon="paper-plane" /></button>
+                <textarea v-model='commentContent' class="comment__whriteContent" type="text" cols="20" rows="1" maxlength="100"></textarea>
+                <button @click="whriteComment(post)" class="comment__button" :class="{'comment__button--disabled' : !textFieldsComment}"><fa icon="paper-plane" /></button>
             </div> 
         </div>   
     <!--End-Publication-->         
@@ -85,6 +94,7 @@ export default {
             commentContent:'',
             file:'',
             filePreview:'',
+            mobile: true,
         }
     },
     components: {
@@ -95,51 +105,60 @@ export default {
             this.$router.push('/login');
             return;
         }
-        this.$store.dispatch('getPosts') // recuperation des posts
+        this.$store.dispatch('getPosts')
         .then (res => {this.posts = res.data});
-        // this.$store.dispatch('getUserDatas');// recuperation des infos du user connecté
     },
     methods: {
+        showMobileNav(){
+            this.mobile = window.innerWidth <= 740;
+        },
         showComment(post) {
-        console.log(post);
-        this.$store.dispatch('getComments', post.id_post)
-        .then (res => post.comments = res.data);
-        post.showw = !post.showw;
+            this.$store.dispatch('getComments', post.id_post)
+            .then (res => post.comments = res.data);
+            post.showw = !post.showw;
+            this.showWhriteComment(post);
         },    
         showWhriteComment(post) {
         post.whrite = !post.whrite;
         },
-        whriteComment: function (postId,index) {
+        whriteComment: function (post) {
             this.$store.dispatch('createComment', {
                 content: this.commentContent,
                 id_user: this.user.userId,
-                id_post: postId,
-            }).then (response => {console.log(response); this.posts[index].comments.shift(response.data[0]) } )
+                id_post: post.id_post,
+            }).then (response => {(response); post.comments.push(response.data[0]);
+            this.commentContent = '';})
         },
         createPost: function () {
             let formData = new FormData();
             formData.append('imageUrl', this.file);
             formData.append('id_user', this.user.userId);
             formData.append('content', this.postContent);
-            console.log(formData);
             this.$store.dispatch('createPost', formData)
-            .then (response => {console.log(response); this.posts.unshift(response.data[0]) } )
+            .then (response => {(response); this.posts.unshift(response.data[0]); 
+            this.postContent = ''; this.file = ''; this.filePreview = '';})
         },
         deletePost: function(id,index) {
-            this.$store.dispatch('deletePost', id)
-            .then (response => {console.log(response);
-            this.posts.splice(index,1)});
+            if (confirm("Voulez vous vraiment supprimer ce post ?")){
+                this.$store.dispatch('deletePost', id)
+                .then (response => (response),
+                this.posts.splice(index,1));
+            }
         },
-        deleteComment: function(idComment,index) {
-            this.$store.dispatch('deleteComment', idComment)
-            .then (response => {console.log(response);
-            this.posts[index].comments.splice(index,1)});
+        deleteComment: function(idComment,index,post) {
+            if (confirm("Voulez vous vraiment supprimer ce commentaire ?")){
+                this.$store.dispatch('deleteComment', idComment)
+                .then (response => (response),post.comments.splice(index,1));
+            }    
         },
         postFile: function(event) {
             this.file = event.target.files[0];
-            console.log(this.file);
             this.filePreview = URL.createObjectURL(this.file);
         }    
+    },
+    created(){
+        window.addEventListener('resize',this.showMobileNav);
+        this.showMobileNav();
     },
     computed : {
             ...mapState(['user']),
@@ -170,7 +189,6 @@ export default {
     display: flex;
     flex-direction: column;    
     position: relative;    
-    max-width: 100%;
     width: 600px;
     height : 100%;
     background: #ffe3e5;
@@ -182,13 +200,23 @@ export default {
             padding-top: 70px; 
             border-bottom:  1px  solid #b0b0b0;
             .form__author {
+                position: relative;
                 border: none;
                 min-width: 50px;
                 max-width: 50px;
                 height: 50px;
                 border-radius: 16px;
+                background-image: linear-gradient(rgb(255, 255, 255) 0%, #e9e9e9 100%);
                 box-shadow: 2px 2px 5px #b0b0b0;
                 margin-left: 25px;
+                .crown {
+                    position: absolute;
+                    z-index: 1;
+                    right: 4px;
+                    bottom: 2px;
+                    font-size: 0.6em;
+                    color: rgb(255, 217, 0);
+                }
                 img {
                     width: 100%;
                     height: 100%;
@@ -275,7 +303,7 @@ export default {
             }
         }
     .card__post{      
-        border-bottom: 1px solid#b0b0b0; // sauf le dernier ? 
+        border-top: 1px solid#b0b0b0;  
         .post {
             margin: 25px;
             margin-bottom: 10px;
@@ -284,11 +312,20 @@ export default {
             justify-content: space-between;
             flex-wrap: wrap;
             .post__author{
+                position: relative;
                 border: none;
                 width: 50px;
                 height: 50px;
                 border-radius: 16px;
                 box-shadow: 2px 2px 5px #b0b0b0;
+                .crown {
+                    position: absolute;
+                    z-index: 1;
+                    right: 4px;
+                    bottom: 2px;
+                    font-size: 0.6em;
+                    color: rgb(255, 217, 0);
+                }
                 img {
                     width: 100%;
                     height: 100%;
@@ -314,7 +351,8 @@ export default {
                     font-size: .8em;
                 }
                 img {
-                    max-width: 300px ;
+                    max-width: 100%;
+                    border-radius: 8px;
                 }
                 .delete {
                     display: flex;
@@ -402,7 +440,6 @@ export default {
         .post__button{
             width: 30%;
             display:flex;
-            justify-content: flex-end;
             margin-top: 20px;
             .button {
                 border: none;
@@ -423,6 +460,8 @@ export default {
                     border-radius: 8px;
                     color: white;
                     background: #091F43;
+                    padding-left: 20px;
+                    padding-right: 20px;
                 }
             }
         }
@@ -474,5 +513,21 @@ export default {
         }
     }      
 }
+}
+
+@media only screen and (max-width: 740px) {
+    .card {
+        .card__feed {
+            width: 100%;
+            .card__post{
+                .post__comment {
+                    .comment {
+                        margin-left: 100px;
+                        margin-right: 15px;
+                        }
+                }
+            }       
+        }
+    }
 }
 </style>

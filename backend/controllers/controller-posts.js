@@ -1,8 +1,17 @@
+//Sommaire
+//Récupération de tout les posts
+//Récupération des commentaires d'un post
+//Ajouter un post (avec ou sans image)
+//Supprimer un post (avec son image)
+//Ajouter un commentaire
+//Supprimer un commentaire
+
 const Posts = require("../dao/dao-posts");
 const fs = require ("fs");
+const { post } = require("../routes/post.routes");
 
 const ControllerPosts = {
-  //Good//
+
   findAllPost: function (req, res, next) {
     Posts.findAllPost(req.body)
     .then(result => {
@@ -25,37 +34,46 @@ const ControllerPosts = {
     });
   }, 
 
-  //Good//
   addPost: async function (req, res, next) {
     console.log(req.body);
     const post =  await Posts.createPost(req.body, {
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+    imageUrl: req.file ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`: '',
     });
     const id = post.insertId
-    console.log(id);
     const Newpost = await Posts.findOne(id);
     res.send(Newpost);
   },
 
-  deletePost: function (req, res, next) {
-    Posts.deletePost({id_post: req.params.id})
-      .then(() => res.status(200).json({ message: 'Post supprimé !'}))
-      .catch(error => res.status(400).json({ error }));
+  deletePost: async function (req, res, next) {
+    const post = await Posts.findOne(req.params.id);
+    if (post[0].id_user == req.auth.userId || req.auth.admin){
+      if (post[0].imageUrl) {
+        const filename = post[0].imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`,() => {
+          Posts.deletePost({id_post: req.params.id});
+          res.status(200).json({message: 'Post supprimé'});
+        });  
+      } else {
+        Posts.deletePost({id_post: req.params.id})
+        res.status(200).json({message: 'Post supprimé'});
+      }    
+    }  
   },
 
   addComment: async function (req, res, next) {
     console.log(req.body);
     const comment =  await Posts.createComment(req.body);
     const id = comment.insertId
-    console.log(id);
     const Newcomment = await Posts.findOneComment(id);
     res.send(Newcomment);
   },
 
-  deleteComment: function (req, res, next) {
-    Posts.deleteComment({id_comment: req.params.id})
-    .then(() => res.status(200).json({ message: 'Commentaire supprimé !'}))
-    .catch(error => res.status(400).json({ error }));
+  deleteComment: async function (req, res, next) {
+    const comment = await Posts.findOneComment(req.params.id);
+    if (comment[0].id_user == req.auth.userId || req.auth.admin){
+        Posts.deleteComment({id_comment: req.params.id})
+        res.status(200).json({message: 'Post supprimé'});
+      }    
   },
 };
 

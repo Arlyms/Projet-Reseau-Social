@@ -33,9 +33,9 @@
         <p class="card__subtitle card__action" v-else @click="switchToLogin()">Se connecter</p> <!-- Mode Inscription --> 
     </div> 
     
-    <div class="card-right"> 
-    <img class="card-right__img1" src="../assets/icon.png" alt="logo groupomania"/> 
-    <img class="card-right__img2" src="../assets/icon-left-white-rongn.png" alt="logo groupomania"/>
+    <div class="card-right">
+        <img class="card-right__img1" src="../assets/icon.png" alt="logo groupomania"/> 
+        <img class="card-right__img2" src="../assets/icon-left-white-rongn.png" alt="logo groupomania"/>
     </div>   
 </div>     
 </template>
@@ -73,7 +73,6 @@ export default {
         },
         ...mapState(['status'])
     },
-
     methods: {
         switchToCreateAccount: function () {
             this.mode = 'create';
@@ -101,12 +100,11 @@ export default {
                 password: this.password,
             }).then(function () {
             self.$router.push('/feed');
-            console.log("Tout est good !! ");
             }, function (error) {
                 console.log(error);
             })
-        }
-    } 
+        },
+    }
 }
 </script>
 
@@ -117,7 +115,7 @@ body {
 }
 
 .card {
-    margin-top: 60px;
+    margin-top: 100px;
     display: flex;
     box-shadow: 2px 2px 5px #b0b0b0;
     border-radius: 8px 8px 8px 8px;
@@ -225,4 +223,21 @@ body {
         text-align: center;
     }
 }    
+
+@media only screen and (max-width: 740px) {
+    .card{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 350px;
+        margin-right: auto;
+        margin-left: auto;
+        .card-right{
+            display: none;
+        }
+        .card-left{
+            border-radius: 8px;
+        }
+    }    
+}
 </style>
